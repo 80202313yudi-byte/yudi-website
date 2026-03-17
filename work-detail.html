@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极简UI设计 | 于迪 - 设计师作品集</title>
+    <!-- 网站描述 -->
+    <meta name="description" content="极简UI设计项目详情，展示现代界面设计的简洁美学和直观用户体验">
+    <meta name="keywords" content="UI设计, UX设计, 极简设计, 界面设计">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- GSAP 动画库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ffffff',
+                        secondary: '#cccccc',
+                        accent: '#666666',
+                        dark: '#000000',
+                        'dark-gray': '#111111',
+                        'light-gray': '#333333',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    transitionProperty: {
+                        'height': 'height',
+                        'spacing': 'margin, padding',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-balance {
+                text-wrap: balance;
+            }
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            }
+            .transition-transform {
+                transition-property: transform;
+                transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                transition-duration: 300ms;
+            }
+            .hover-scale {
+                @apply hover:scale-105 transition-transform duration-300;
+            }
+            .card-shadow {
+                box-shadow: 0 4px 20px rgba(255, 255, 255, 0.08);
+            }
+            .nav-shadow {
+                box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05);
+            }
+        }
+    </style>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-dark text-primary font-sans">
+    <!-- 导航栏 -->
+    <nav id="navbar" class="navbar-fixed bg-dark bg-opacity-95 nav-shadow py-4">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="flex justify-between-between items-center">
+                <a href="index.html" class="text-2xl font-bold text-primary">于迪</a>
+                
+                <!-- 桌面导航 -->
+                <div class="hidden md:flex ml-auto space-x-8">
+                    <a href="index.html#home" class="text-secondary hover:text-primary transition-colors">首页</a>
+                    <a href="index.html#works" class="text-secondary hover:text-primary transition-colors">作品</a>
+                    <a href="index.html#about" class="text-secondary hover:text-primary transition-colors">关于我</a>
+                    <a href="index.html#contact" class="text-secondary hover:text-primary transition-colors">联系</a>
+                </div>
+                
+                <!-- 移动端菜单按钮 -->
+                <button id="menu-toggle" class="md:hidden ml-auto text-primary focus:outline-none">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden bg-dark hidden absolute top-full left-0 w-full border-t border-light-gray">
+            <div class="container mx-auto px-4 py-4">
+                <a href="index.html#home" class="block py-2 text-secondary hover:text-primary">首页</a>
+                <a href="index.html#works" class="block py-2 text-secondary hover:text-primary">作品</a>
+                <a href="index.html#about" class="block py-2 text-secondary hover:text-primary">关于我</a>
+                <a href="index.html#contact" class="block py-2 text-secondary hover:text-primary">联系</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 作品详情区域 -->
+    <section class="py-24 pt-32">
+        <div class="container mx-auto px-4">
+            <!-- 作品标题和元信息 -->
+            <div class="mb-12">
+                <div class="flex items-center mb-4">
+                    <a href="index.html#works" class="text-secondary hover:text-primary transition-colors mr-4">
+                        <i class="fa fa-arrow-left"></i> 返回作品列表
+                    </a>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-light mb-4">极简UI设计</h1>
+                <p class="text-secondary mb-6">现代界面设计，具有简洁美学和直观的用户体验。</p>
+                <div class="flex flex-wrap gap-4">
+                    <div class="px-4 py-2 bg-light-gray rounded-full text-sm">UI/UX 设计</div>
+                    <div class="px-4 py-2 bg-light-gray rounded-full text-sm">2024年</div>
+                    <div class="px-4 py-2 bg-light-gray rounded-full text-sm">Figma</div>
+                </div>
+            </div>
+            
+            <!-- 作品主图 -->
+            <div class="mb-16">
+                <img loading="lazy" src="https://placehold.co/1200x800/FFFFFF/000000?text=Minimal+UI+Design" alt="极简UI设计" class="w-full rounded-lg shadow-lg">
+            </div>
+            
+            <!-- 作品详情内容 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <!-- 左侧内容 -->
+                <div class="md:col-span-2">
+                    <h2 class="text-2xl font-light mb-6">项目概述</h2>
+                    <p class="text-secondary mb-6 leading-relaxed">
+                        这个项目旨在创建一个极简风格的用户界面设计，注重用户体验和视觉美感的平衡。设计采用了简洁的布局、适当的留白和清晰的视觉层次，确保用户能够轻松导航和使用界面。
+                    </p>
+                    <p class="text-secondary mb-6 leading-relaxed">
+                        项目的核心目标是通过减少视觉干扰，突出内容本身，为用户提供一个直观、高效的交互体验。设计过程中，我注重每一个细节，从色彩选择到排版布局，都经过精心考量。
+                    </p>
+                    
+                    <h2 class="text-2xl font-light mb-6 mt-12">设计思路</h2>
+                    <p class="text-secondary mb-6 leading-relaxed">
+                        1. <strong>极简主义原则</strong>：采用简洁的设计语言，减少不必要的元素，突出核心功能和内容。
+                    </p>
+                    <p class="text-secondary mb-6 leading-relaxed">
+                        2. <strong>用户为中心</strong>：通过用户研究和测试，确保设计符合用户需求和使用习惯。
+                    </p>
+                    <p class="text-secondary mb-6 leading-relaxed">
+                        3. <strong>视觉层次</strong>：通过排版、色彩和空间关系，创建清晰的视觉层次，引导用户注意力。
+                    </p>
+                    <p class="text-secondary mb-6 leading-relaxed">
+                        4. <strong>响应式设计</strong>：确保界面在不同设备上都能提供良好的用户体验。
+                    </p>
+                    
+                    <h2 class="text-2xl font-light mb-6 mt-12">技术实现</h2>
+                    <p class="text-secondary mb-6 leading-relaxed">
+                        使用Figma进行设计，采用组件化的设计方法，确保设计系统的一致性和可维护性。通过原型测试，验证设计方案的可行性和用户体验。
+                    </p>
+                </div>
+                
+                <!-- 右侧信息 -->
+                <div class="md:col-span-1">
+                    <div class="bg-dark-gray p-6 rounded-lg mb-8">
+                        <h3 class="text-xl font-light mb-4">项目信息</h3>
+                        <ul class="space-y-4">
+                            <li class="flex justify-between">
+                                <span class="text-secondary">项目类型</span>
+                                <span>UI/UX 设计</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="text-secondary">完成时间</span>
+                                <span>2024年6月</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="text-secondary">使用工具</span>
+                                <span>Figma</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="text-secondary">项目时长</span>
+                                <span>4周</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-dark-gray p-6 rounded-lg">
+                        <h3 class="text-xl font-light mb-4">相关技能</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-4 py-2 bg-light-gray rounded-full text-sm">UI设计</span>
+                            <span class="px-4 py-2 bg-light-gray rounded-full text-sm">UX设计</span>
+                            <span class="px-4 py-2 bg-light-gray rounded-full text-sm">Figma</span>
+                            <span class="px-4 py-2 bg-light-gray rounded-full text-sm">原型设计</span>
+                            <span class="px-4 py-2 bg-light-gray rounded-full text-sm">用户研究</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 作品图片展示 -->
+            <div class="mt-16">
+                <h2 class="text-2xl font-light mb-8">设计展示</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <img loading="lazy" src="https://placehold.co/600x400/FFFFFF/000000?text=Design+Showcase+1" alt="设计展示" class="w-full rounded-lg shadow-lg">
+                    <img loading="lazy" src="https://placehold.co/600x400/FFFFFF/000000?text=Design+Showcase+2" alt="设计展示" class="w-full rounded-lg shadow-lg">
+                </div>
+            </div>
+            
+            <!-- 项目成果 -->
+            <div class="mt-24">
+                <h2 class="text-2xl font-light mb-8">项目成果</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-dark-gray p-6 rounded-lg">
+                        <div class="w-12 h-12 bg-light-gray rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-line-chart text-primary"></i>
+                        </div>
+                        <h3 class="text-lg font-medium mb-2">品牌认知度</h3>
+                        <p class="text-secondary text-sm">品牌重塑后，品牌认知度提高了60%，客户对品牌的奢华感和独特性有了更强的认知。</p>
+                    </div>
+                    <div class="bg-dark-gray p-6 rounded-lg">
+                        <div class="w-12 h-12 bg-light-gray rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-thumbs-up text-primary"></i>
+                        </div>
+                        <h3 class="text-lg font-medium mb-2">客户满意度</h3>
+                        <p class="text-secondary text-sm">客户满意度提高了35%，90%的客户表示新的品牌设计"非常吸引人"且"符合高端定位"。</p>
+                    </div>
+                    <div class="bg-dark-gray p-6 rounded-lg">
+                        <div class="w-12 h-12 bg-light-gray rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-bullseye text-primary"></i>
+                        </div>
+                        <h3 class="text-lg font-medium mb-2">业务影响</h3>
+                        <p class="text-secondary text-sm">新品牌推出后的第一季度内，销售额增长了15%，高价位产品的销售比例显著提高。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 相关项目 -->
+            <div class="mt-24">
+                <h2 class="text-2xl font-light mb-8">相关项目</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-dark-gray rounded-lg overflow-hidden">
+                        <div class="h-48 bg-light-gray flex items-center justify-center">
+                            <img loading="lazy" src="https://placehold.co/400x300/FFFFFF/000000?text=Travel" alt="Oitcut网站" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-lg font-medium mb-2">Oitcut网站</h3>
+                            <p class="text-secondary text-sm mb-4">采用现代排版的浅色主题网站。</p>
+                            <a href="work-detail.html" class="text-primary text-sm font-medium hover:underline">查看项目</a>
+                        </div>
+                    </div>
+                    <div class="bg-dark-gray rounded-lg overflow-hidden">
+                        <div class="h-48 bg-light-gray flex items-center justify-center">
+                            <img loading="lazy" src="https://placehold.co/400x300/FFFFFF/000000?text=Headphones" alt="耳机产品品牌设计" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-lg font-medium mb-2">耳机产品品牌设计</h3>
+                            <p class="text-secondary text-sm mb-4">黑色背景上的金色箔面效果，优雅的品牌设计。</p>
+                            <a href="work-detail.html" class="text-primary text-sm font-medium hover:underline">查看项目</a>
+                        </div>
+                    </div>
+                    <div class="bg-dark-gray rounded-lg overflow-hidden">
+                        <div class="h-48 bg-light-gray flex items-center justify-center">
+                            <img loading="lazy" src="https://placehold.co/400x300/FFFFFF/000000?text=Tech+Product" alt="极简科技产品" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-lg font-medium mb-2">极简科技产品</h3>
+                            <p class="text-secondary text-sm mb-4">消费品的技术图纸和草图。</p>
+                            <a href="work-detail.html" class="text-primary text-sm font-medium hover:underline">查看项目</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 返回所有作品按钮 -->
+                <div class="mt-12 text-center">
+                    <a href="index.html#works" class="inline-block px-8 py-3 bg-white text-black font-medium rounded-md hover:bg-gray-200 transition duration-300">
+                        返回所有作品
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="py-12 bg-black text-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-2xl font-bold">于迪</h3>
+                    <p class="text-secondary mt-2">一位创造数字体验的设计师。</p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="#" class="text-secondary hover:text-white transition duration-300">
+                        <i class="fa fa-behance text-xl"></i>
+                    </a>
+                    <a href="#" class="text-secondary hover:text-white transition duration-300">
+                        <i class="fa fa-dribbble text-xl"></i>
+                    </a>
+                    <a href="#" class="text-secondary hover:text-white transition duration-300">
+                        <i class="fa fa-instagram text-xl"></i>
+                    </a>
+                    <a href="#" class="text-secondary hover:text-white transition duration-300">
+                        <i class="fa fa-linkedin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="border-t border-light-gray mt-8 pt-8 text-center text-secondary text-sm">
+                <p>© 2025 于迪。保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-white text-black w-12 h-12 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html>
