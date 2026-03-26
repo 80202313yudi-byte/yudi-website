@@ -11,6 +11,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <!-- GSAP 动画库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
@@ -349,6 +351,10 @@
                         <h3 class="text-2xl font-light mb-6" data-scroll-reveal="">给我留言</h3>
                         
                         <form id="contact-form" class="space-y-6">
+                            <input type="hidden" name="to_email" value="80202313@qq.com">
+                            <input type="hidden" name="site_name" value="于迪.com">
+                            <input type="hidden" id="page_url" name="page_url" value="">
+                            <input type="hidden" id="submitted_at" name="submitted_at" value="">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="name" class="block text-sm font-medium text-secondary mb-1">姓名</label>
@@ -370,10 +376,11 @@
                                 <textarea id="message" name="message" rows="5" required placeholder="欢迎告诉我项目背景、预算范围或合作想法" class="w-full px-4 py-2 bg-light-gray border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-white"></textarea>
                             </div>
                             
-                            <button type="submit" class="w-full px-8 py-3 bg-white text-black font-medium rounded-md hover:bg-gray-200 transition duration-300">
+                            <button id="contact-submit" type="submit" class="w-full px-8 py-3 bg-white text-black font-medium rounded-md hover:bg-gray-200 transition duration-300 disabled:cursor-not-allowed disabled:opacity-60">
                                 发送消息
                             </button>
-                            <p class="text-sm text-secondary">提交后会唤起你的默认邮件客户端，收件人是 80202313@qq.com。</p>
+                            <p id="contact-status" class="hidden text-sm" aria-live="polite"></p>
+                            <p class="text-sm text-secondary">表单会通过 EmailJS 直接发送到 80202313@qq.com。请先在 <code>emailjs-config.js</code> 填入你的配置。</p>
                         </form>
                     </div>
                 </div>
@@ -405,8 +412,8 @@
                 </div>
                 
                 <div class="social-links">
-                    <a href="https://www.zcool.com.cn/u/19246952" target="_blank" rel="noreferrer" aria-label="站酷主页" title="站酷主页" class="social-link social-link-wordmark">
-                        <span>ZCOOL</span>
+                    <a href="https://www.zcool.com.cn/u/19246952" target="_blank" rel="noreferrer" aria-label="站酷主页" title="站酷主页" class="social-link social-link-zcool">
+                        <span class="social-link-zcool-mark" aria-hidden="true"></span>
                     </a>
                     <a href="https://dribbble.com/FISHDI" target="_blank" rel="noreferrer" aria-label="Dribbble 主页" title="Dribbble 主页" class="social-link">
                         <i class="fa fa-dribbble" aria-hidden="true"></i>
@@ -431,6 +438,7 @@
         <i class="fa fa-arrow-up"></i>
     </button>
 
+    <script src="emailjs-config.js"></script>
     <script src="script.js"></script>
 
 </body></html>
