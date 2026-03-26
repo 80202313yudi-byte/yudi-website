@@ -114,20 +114,16 @@
     line-height: 1;
 }
 
-.social-link-zcool {
-    width: 2.75rem;
-    height: 2.75rem;
+.social-link-wordmark {
+    width: auto;
+    min-width: 2.75rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
 }
 
-.zcool-badge {
+.social-link-wordmark span {
     display: block;
-    width: 1.62rem;
-    height: 1.62rem;
-    color: currentColor;
     transform: translateY(1px);
-    transition: transform 0.3s ease;
-}
-
-.social-link-zcool:hover .zcool-badge {
-    transform: translateY(-1px);
 }
