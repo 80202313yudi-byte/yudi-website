@@ -3,66 +3,86 @@ document.addEventListener('DOMContentLoaded', function() {
     // 移动端菜单切换
     const menuToggle = document.getElementById('menu-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
-    
-    menuToggle.addEventListener('click', function() {
-        mobileMenu.classList.toggle('hidden');
-    });
+    const navbar = document.getElementById('navbar');
+    const backToTopButton = document.getElementById('back-to-top');
+    const typingText = document.getElementById('typing-text');
+    const parallaxBackground = document.getElementById('parallax-bg');
+    const contactForm = document.getElementById('contact-form');
+
+    if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
     
     // 平滑滚动
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+
+            if (!targetId || targetId === '#') {
+                e.preventDefault();
+                return;
+            }
+
+            const targetElement = document.querySelector(targetId);
+            if (!targetElement) {
+                return;
+            }
+
             e.preventDefault();
-            
+
             // 关闭移动菜单（如果打开）
-            if (!mobileMenu.classList.contains('hidden')) {
+            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
                 mobileMenu.classList.add('hidden');
             }
-            
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 80, // 考虑导航栏高度
-                    behavior: 'smooth'
-                });
-            }
+
+            window.scrollTo({
+                top: targetElement.offsetTop - 80, // 考虑导航栏高度
+                behavior: 'smooth'
+            });
         });
     });
     
     // 导航栏滚动效果
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 50) {
-            navbar.classList.add('bg-dark', 'shadow-md');
-            navbar.classList.remove('bg-opacity-95');
-        } else {
-            navbar.classList.remove('shadow-md');
-            navbar.classList.add('bg-opacity-95');
-        }
-    });
+    if (navbar) {
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-dark', 'shadow-md');
+                navbar.classList.remove('bg-opacity-95');
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.classList.add('bg-opacity-95');
+            }
+        });
+    }
     
     // 回到顶部按钮
-    const backToTopButton = document.getElementById('back-to-top');
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 300) {
-            backToTopButton.classList.remove('opacity-0', 'invisible');
-            backToTopButton.classList.add('opacity-100', 'visible');
-        } else {
-            backToTopButton.classList.add('opacity-0', 'invisible');
-            backToTopButton.classList.remove('opacity-100', 'visible');
-        }
-    });
-    
-    backToTopButton.addEventListener('click', function() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
+    if (backToTopButton) {
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+                backToTopButton.classList.remove('opacity-100', 'visible');
+            }
         });
-    });
+
+        backToTopButton.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
     
     // 打字效果
     const typingEffect = (element, words, typingSpeed = 100, pauseTime = 1000) => {
+        if (!element || !words.length) {
+            return;
+        }
+
         let wordIndex = 0;
         let charIndex = 0;
         let isDeleting = false;
@@ -98,18 +118,23 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // 初始化打字效果
-    typingEffect(
-        document.getElementById('typing-text'),
-        ['数字体验', '极简设计', '创意作品', '用户价值'],
-        80, 
-        1000
-    );
+    if (typingText) {
+        typingEffect(
+            typingText,
+            ['数字体验', '极简设计', '创意作品', '用户价值'],
+            80,
+            1000
+        );
+    }
     
     // 鼠标跟随效果已移除
     
     // 视差滚动效果
     const parallaxEffect = () => {
-        const background = document.getElementById('parallax-bg');
+        if (!parallaxBackground) {
+            return;
+        }
+
         const maxBlur = 15;
         const minScale = 0.6;
       
@@ -122,8 +147,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentBlur = scrollPercent * maxBlur;
             const currentScale = 1 - (scrollPercent * (1 - minScale));
           
-            background.style.filter = `blur(${currentBlur}px)`;
-            background.style.transform = `scale(${currentScale})`;
+            parallaxBackground.style.filter = `blur(${currentBlur}px)`;
+            parallaxBackground.style.transform = `scale(${currentScale})`;
         });
     };
     
@@ -133,6 +158,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // 滚动渐入效果
     const setupScrollReveal = () => {
         const revealElements = document.querySelectorAll('[data-scroll-reveal]');
+        if (!revealElements.length) {
+            return;
+        }
+
+        if (!('IntersectionObserver' in window)) {
+            revealElements.forEach(element => {
+                element.style.opacity = '1';
+                element.classList.add('animate-fade-in');
+            });
+            return;
+        }
       
         const revealOnScroll = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -187,24 +223,31 @@ document.addEventListener('DOMContentLoaded', function() {
     setupScrollReveal();
     
     // 表单提交处理
-    const contactForm = document.getElementById('contact-form');
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // 获取表单数据
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const subject = document.getElementById('subject').value;
-        const message = document.getElementById('message').value;
-        
-        // 简单验证
-        if (!name || !email || !message) {
-            alert('请填写必填字段');
-            return;
-        }
-        
-        // 模拟表单提交
-        alert('感谢您的留言！我们会尽快回复您。');
-        contactForm.reset();
-    });
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if (!name || !email || !message) {
+                alert('请填写必填字段');
+                return;
+            }
+
+            const mailSubject = subject || `来自 ${name} 的网站留言`;
+            const mailBody = [
+                `姓名：${name}`,
+                `邮箱：${email}`,
+                '',
+                message
+            ].join('\n');
+
+            const mailtoLink = `mailto:80202313@qq.com?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+            window.location.href = mailtoLink;
+            contactForm.reset();
+        });
+    }
 });
