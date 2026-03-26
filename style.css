@@ -121,9 +121,10 @@
 
 .zcool-badge {
     display: block;
-    width: 1.78rem;
-    height: 1.78rem;
+    width: 1.62rem;
+    height: 1.62rem;
     color: currentColor;
+    transform: translateY(1px);
     transition: transform 0.3s ease;
 }
 
