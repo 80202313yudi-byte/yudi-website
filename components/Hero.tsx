@@ -27,9 +27,6 @@ export function Hero() {
           </h1>
 
           <div className="mt-6 grid max-w-[34em] gap-5">
-            <p className="hero-intro copy-pretty">
-              我帮助品牌与产品，用设计与视觉讲好故事，让创意在真实世界中产生价值与影响力。
-            </p>
             <TypewriterIntro />
           </div>
 

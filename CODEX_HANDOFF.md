@@ -235,8 +235,7 @@ Rules:
 
 - Hero headline: `把想法，变成可以被看见的作品。`
 - `看见` is the key fluorescent-green phrase and must not split awkwardly
-- Hero supporting copy:
-  - `我帮助品牌与产品，用设计与视觉讲好故事，让创意在真实世界中产生价值与影响力。`
+- Hero supporting copy has been removed; the rotating focus line is now the first supporting content under the headline.
 - Typewriter keywords:
   - AI 视觉
   - 品牌设计
@@ -370,6 +369,7 @@ If transferring through GitHub instead of copying the folder, commit and push to
 - Slightly widened mobile hero work-wall cards so the horizontal gallery feels more intentional without adding instructional UI text.
 - Normalized project return-state source paths so `/works` and `/works/` are treated the same, preserving return-to-archive behavior in static local previews.
 - Fixed the mobile header menu button placement by giving the nav pill a two-column mobile layout so the hamburger stays aligned to the right edge.
+- Removed the Hero supporting sentence beneath the main headline, leaving the rotating focus line and primary actions as the first supporting content.
 
 ### 2026-06-09
 
