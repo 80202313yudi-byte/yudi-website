@@ -18,7 +18,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export function ProjectDetailIntro({ project }: ProjectDetailIntroProps) {
   const reduceMotion = useHydratedReducedMotion();
-  const { exiting, returnToWorks } = useProjectDetailTransition();
+  const { exiting, handleReturnToWorks } = useProjectDetailTransition();
   const initial = reduceMotion ? false : { opacity: 0, y: 12 };
   const animate = { opacity: 1, y: 0 };
   const transition = (delay: number) => ({
@@ -34,7 +34,7 @@ export function ProjectDetailIntro({ project }: ProjectDetailIntroProps) {
         className="case-back-link"
         aria-label="返回之前浏览的作品位置"
         disabled={exiting}
-        onClick={returnToWorks}
+        onClick={handleReturnToWorks}
       >
         <ArrowLeft size={17} aria-hidden="true" />
         返回作品列表

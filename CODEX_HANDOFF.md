@@ -103,6 +103,7 @@ components/
   ProjectCardLink.tsx       Whole-card project link and return-state capture
   ProjectReturnRestorer.tsx Homepage history and scroll-position restoration
   ProjectDetailTransition.tsx Detail-page return behavior and route transition
+  ProjectReturnToWorksButton.tsx Detail-page bottom CTA using shared return logic
   ProjectHomeLink.tsx       Explicit detail-page links that clear return state
   AboutSection.tsx          About area
   CapabilitiesSection.tsx   Services and deliverables
@@ -143,7 +144,7 @@ Detail-page navigation must link back to homepage sections using paths such as `
 - Hero typewriter rotates only the first-line keyword
 - Project cards use one whole-card link and navigate to unique detail routes
 - Opening a project records its slug and homepage scroll position in `sessionStorage`
-- The detail-page return button and browser back restore the exact prior homepage position
+- The detail-page top return button, bottom "继续看作品" CTA, and browser back restore the exact prior homepage position
 - Directly opened detail pages fall back to the matching `#project-{slug}` card anchor
 - Returned cards receive a brief restrained highlight, disabled with `prefers-reduced-motion`
 - Project cover images subtly enlarge on hover
@@ -294,6 +295,7 @@ Transfer the remaining project folder contents, then run `npm install`.
 
 - Refined Chinese copy and typography across the homepage and project details: removed right-aligned body copy, added balanced heading and pretty paragraph wrapping, tightened section descriptions, and protected key phrases from awkward splitting.
 - Loosened the About headline line-height so the two-line Chinese title has more breathing room without affecting the Hero headline.
+- Changed the detail-page bottom CTA from a fixed `/#works` link to a shared return button, with the label `继续看作品`.
 - Reworked project-detail return navigation to prefer browser history, restore the originating card scroll position, and fall back to the matching project-card anchor for direct detail-page visits.
 - Added per-card `project-{slug}` anchors, temporary session return state, reduced-motion-safe return feedback, and protection against stale return state during explicit detail-page navigation.
 - Added `AGENTS.md` and this persistent handoff document for cross-device Codex collaboration.

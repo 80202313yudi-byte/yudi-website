@@ -19,7 +19,7 @@ type ProjectDetailTransitionProps = {
 
 type ProjectTransitionContextValue = {
   exiting: boolean;
-  returnToWorks: () => void;
+  handleReturnToWorks: () => void;
 };
 
 const ProjectTransitionContext = createContext<ProjectTransitionContextValue | null>(null);
@@ -51,7 +51,7 @@ export function ProjectDetailTransition({
   const reduceMotion = useHydratedReducedMotion();
   const [exiting, setExiting] = useState(false);
 
-  const returnToWorks = useCallback(() => {
+  const handleReturnToWorks = useCallback(() => {
     if (exiting) {
       return;
     }
@@ -76,7 +76,10 @@ export function ProjectDetailTransition({
     router.push(`/#${getProjectCardId(projectSlug)}`);
   }, [exiting, projectSlug, router]);
 
-  const contextValue = useMemo(() => ({ exiting, returnToWorks }), [exiting, returnToWorks]);
+  const contextValue = useMemo(
+    () => ({ exiting, handleReturnToWorks }),
+    [exiting, handleReturnToWorks],
+  );
 
   return (
     <ProjectTransitionContext.Provider value={contextValue}>

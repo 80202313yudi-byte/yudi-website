@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Mail } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Mail } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/Footer";
 import { ProjectDetailIntro } from "@/components/ProjectDetailIntro";
 import { ProjectHomeLink } from "@/components/ProjectHomeLink";
 import { ProjectDetailTransition } from "@/components/ProjectDetailTransition";
 import { ProjectMedia } from "@/components/ProjectMedia";
+import { ProjectReturnToWorksButton } from "@/components/ProjectReturnToWorksButton";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { getProjectBySlug, projects } from "@/data/projects";
 
@@ -201,10 +202,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                   <Mail size={18} aria-hidden="true" />
                   联系合作
                 </ProjectHomeLink>
-                <ProjectHomeLink href="/#works" className="btn-secondary">
-                  查看更多作品
-                  <ArrowUpRight size={18} aria-hidden="true" />
-                </ProjectHomeLink>
+                <ProjectReturnToWorksButton />
               </div>
             </div>
           </div>
