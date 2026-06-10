@@ -17,7 +17,7 @@ type MagneticLinkProps = {
   visualClassName?: string;
 } & Pick<
   AnchorHTMLAttributes<HTMLAnchorElement>,
-  "aria-current" | "aria-label" | "onClick" | "rel" | "target"
+  "aria-current" | "aria-label" | "onClick" | "rel" | "tabIndex" | "target"
 >;
 
 type MagneticStyle = CSSProperties & {

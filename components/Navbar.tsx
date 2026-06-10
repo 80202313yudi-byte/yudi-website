@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MagneticLink } from "@/components/MagneticLink";
 import { projectReturnStateKey } from "@/data/projectNavigation";
 import { navItems } from "@/data/site";
@@ -13,9 +13,75 @@ type NavbarProps = {
   detailPage?: boolean;
 };
 
+type MobileMenuState = "closed" | "opening" | "open" | "closing";
+
+const mobileMenuAnimationMs = 220;
+
 export function Navbar({ detailPage = false }: NavbarProps) {
-  const [open, setOpen] = useState(false);
+  const [mobileMenuState, setMobileMenuState] = useState<MobileMenuState>("closed");
   const [active, setActive] = useState("#home");
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuPanelRef = useRef<HTMLElement>(null);
+  const closeTimerRef = useRef<number | null>(null);
+  const openTimerRef = useRef<number | null>(null);
+  const touchStartRef = useRef({ x: 0, y: 0 });
+  const isMobileMenuVisible = mobileMenuState !== "closed";
+  const isMobileMenuExpanded = mobileMenuState === "opening" || mobileMenuState === "open";
+  const isMobileMenuInteractive = mobileMenuState === "open";
+
+  const closeMobileMenu = useCallback((options: { restoreFocus?: boolean } = {}) => {
+    if (openTimerRef.current !== null) {
+      window.clearTimeout(openTimerRef.current);
+      openTimerRef.current = null;
+    }
+
+    setMobileMenuState((current) => {
+      if (current === "closed" || current === "closing") {
+        return current;
+      }
+
+      return "closing";
+    });
+
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current);
+    }
+
+    closeTimerRef.current = window.setTimeout(() => {
+      setMobileMenuState("closed");
+      closeTimerRef.current = null;
+
+      if (options.restoreFocus) {
+        menuButtonRef.current?.focus();
+      }
+    }, mobileMenuAnimationMs);
+  }, []);
+
+  const openMobileMenu = useCallback(() => {
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+
+    if (openTimerRef.current !== null) {
+      window.clearTimeout(openTimerRef.current);
+    }
+
+    setMobileMenuState("opening");
+    openTimerRef.current = window.setTimeout(() => {
+      setMobileMenuState("open");
+      openTimerRef.current = null;
+    }, 20);
+  }, []);
+
+  const toggleMobileMenu = useCallback(() => {
+    if (isMobileMenuExpanded) {
+      closeMobileMenu({ restoreFocus: true });
+      return;
+    }
+
+    openMobileMenu();
+  }, [closeMobileMenu, isMobileMenuExpanded, openMobileMenu]);
 
   useEffect(() => {
     if (detailPage) {
@@ -90,16 +156,87 @@ export function Navbar({ detailPage = false }: NavbarProps) {
   }, [detailPage]);
 
   useEffect(() => {
-    if (!open) {
+    return () => {
+      if (closeTimerRef.current !== null) {
+        window.clearTimeout(closeTimerRef.current);
+      }
+
+      if (openTimerRef.current !== null) {
+        window.clearTimeout(openTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isMobileMenuExpanded) {
       return;
     }
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow;
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Node)) {
+        return;
+      }
+
+      if (menuPanelRef.current?.contains(target) || menuButtonRef.current?.contains(target)) {
+        return;
+      }
+
+      closeMobileMenu();
     };
-  }, [open]);
+
+    const handleWheel = (event: WheelEvent) => {
+      if (Math.abs(event.deltaY) > 4 || Math.abs(event.deltaX) > 4) {
+        closeMobileMenu();
+      }
+    };
+
+    const handleTouchStart = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      if (!touch) {
+        return;
+      }
+
+      touchStartRef.current = {
+        x: touch.clientX,
+        y: touch.clientY,
+      };
+    };
+
+    const handleTouchMove = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      if (!touch) {
+        return;
+      }
+
+      const deltaY = touch.clientY - touchStartRef.current.y;
+      const deltaX = touch.clientX - touchStartRef.current.x;
+
+      if (Math.abs(deltaY) > 12 || Math.abs(deltaX) > 24) {
+        closeMobileMenu();
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeMobileMenu({ restoreFocus: true });
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown, true);
+    window.addEventListener("wheel", handleWheel, { passive: true });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown, true);
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [closeMobileMenu, isMobileMenuExpanded]);
 
   const handleNavigation = (href: string) => {
     if (!detailPage) {
@@ -111,7 +248,7 @@ export function Navbar({ detailPage = false }: NavbarProps) {
         // Explicit navigation must remain available when browser storage is unavailable.
       }
     }
-    setOpen(false);
+    closeMobileMenu();
   };
 
   const getHref = (href: string) => (detailPage ? `/${href}` : href);
@@ -153,14 +290,15 @@ export function Navbar({ detailPage = false }: NavbarProps) {
           </div>
 
           <button
+            ref={menuButtonRef}
             type="button"
-            aria-label={open ? "关闭菜单" : "打开菜单"}
-            aria-expanded={open}
+            aria-label={isMobileMenuExpanded ? "关闭菜单" : "打开菜单"}
+            aria-expanded={isMobileMenuExpanded}
             aria-controls="mobile-navigation"
             className="mobile-menu-button grid h-11 w-11 place-items-center rounded-full border border-line text-text transition hover:border-accent md:hidden"
-            onClick={() => setOpen((value) => !value)}
+            onClick={toggleMobileMenu}
           >
-            {open ? <X size={18} /> : <Menu size={18} />}
+            {isMobileMenuExpanded ? <X size={18} /> : <Menu size={18} />}
           </button>
         </nav>
 
@@ -174,16 +312,28 @@ export function Navbar({ detailPage = false }: NavbarProps) {
         </Link>
       </div>
 
-      {open ? (
-        <div
-          id="mobile-navigation"
-          className="site-nav-shell mt-3 rounded-3xl border border-line bg-[#111111] p-3 shadow-panel md:hidden"
-        >
+      {isMobileMenuVisible ? (
+        <>
+          <div
+            className="mobile-menu-backdrop md:hidden"
+            data-state={mobileMenuState}
+            aria-hidden="true"
+            onClick={() => closeMobileMenu()}
+          />
+          <nav
+            ref={menuPanelRef}
+            id="mobile-navigation"
+            aria-label="移动端导航"
+            aria-hidden={isMobileMenuInteractive ? undefined : true}
+            className="mobile-menu-panel site-nav-shell mt-3 rounded-3xl border border-line bg-[#111111] p-3 shadow-panel md:hidden"
+            data-state={mobileMenuState}
+          >
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={getHref(item.href)}
               aria-current={active === item.href ? "page" : undefined}
+              tabIndex={isMobileMenuInteractive ? undefined : -1}
               className={`block min-h-11 rounded-2xl px-4 py-3 text-sm font-medium ${
                 active === item.href ? "bg-accent/12 text-accent" : "text-[#c1c1c1]"
               }`}
@@ -197,11 +347,13 @@ export function Navbar({ detailPage = false }: NavbarProps) {
             aria-current={active === "#contact" ? "page" : undefined}
             className="mt-2 w-full"
             visualClassName="btn-primary w-full"
+            tabIndex={isMobileMenuInteractive ? undefined : -1}
             onClick={() => handleNavigation("#contact")}
           >
             联系我
           </MagneticLink>
-        </div>
+          </nav>
+        </>
       ) : null}
     </header>
   );

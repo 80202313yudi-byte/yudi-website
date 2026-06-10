@@ -123,6 +123,8 @@ img {
 }
 
 .header-shell {
+  position: relative;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -375,6 +377,43 @@ button:focus-visible {
 .header-contact-button:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 4px;
+}
+
+.mobile-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: transparent;
+  opacity: 1;
+  transition: opacity 220ms ease;
+}
+
+.mobile-menu-backdrop[data-state="closing"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mobile-menu-panel {
+  position: relative;
+  z-index: 4;
+  transform-origin: top center;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity 220ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.mobile-menu-panel[data-state="opening"] {
+  opacity: 0;
+  transform: translateY(-0.375rem) scale(0.985);
+}
+
+.mobile-menu-panel[data-state="closing"] {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-0.375rem) scale(0.985);
 }
 
 .hero-section {
@@ -1434,6 +1473,17 @@ button:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .mobile-menu-backdrop,
+  .mobile-menu-panel {
+    transition: none;
+  }
+
+  .mobile-menu-panel,
+  .mobile-menu-panel[data-state="opening"],
+  .mobile-menu-panel[data-state="closing"] {
+    transform: none;
+  }
+
   .hero-work-track {
     overflow-x: auto;
     scrollbar-width: none;
