@@ -51,10 +51,10 @@ No environment variables are currently required.
 
 - GitHub repository: `https://github.com/80202313yudi-byte/yudi-website`
 - Remote default branch: `main`
-- The current `main` branch contains the previous static website and remains live through GitHub Pages
 - Current custom domain: `于迪.com` (`xn--6kq660n.com`)
-- The Next.js version should be reviewed on a separate branch and deployed through Vercel before switching the custom domain
-- Do not merge a Next.js migration into `main` or change the domain configuration without confirming the replacement deployment is ready
+- The Next.js application uses `output: "export"` and deploys through GitHub Actions to GitHub Pages
+- The deployment workflow is `.github/workflows/deploy-pages.yml`
+- The exported custom-domain file is `public/CNAME`
 
 ## Start And Verify
 
@@ -277,6 +277,7 @@ Transfer the remaining project folder contents, then run `npm install`.
 - Added instructions requiring future Codex sessions to update this document after completed changes.
 - Connected the project context to `80202313yudi-byte/yudi-website` and documented the existing GitHub Pages domain setup.
 - Confirmed the Chinese custom domain is `于迪.com`, represented by `xn--6kq660n.com`.
+- Configured Next.js static export and GitHub Actions deployment so the new version can fully replace the previous GitHub Pages site.
 
 ### 2026-06-09
 

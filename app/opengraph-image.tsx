@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 
+export const dynamic = "force-static";
 export const alt = "FISHDI AI Visual Designer & Content Creator";
 export const size = {
   width: 1200,
