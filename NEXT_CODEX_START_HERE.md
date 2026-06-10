@@ -1,6 +1,6 @@
 # Start Here For Next Codex
 
-这是 FISHDI / 于迪个人网站项目。另一台 Codex 接手前，请先读本文件，再读 `CODEX_HANDOFF.md` 和 `AGENTS.md`。
+这是 FISHDI / 于迪个人网站项目。开始修改前，请先读本文件和 `AGENTS.md`。
 
 ## 当前项目位置
 
