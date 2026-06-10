@@ -1,0 +1,24 @@
+<svg width="1200" height="820" viewBox="0 0 1200 820" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="core" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 410) rotate(90) scale(278)">
+      <stop stop-color="#F5F5F5" stop-opacity="0.84"/>
+      <stop offset="0.48" stop-color="#979797" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#111111" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="54" height="54" patternUnits="userSpaceOnUse">
+      <path d="M54 0H0V54" stroke="white" stroke-opacity="0.055"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="820" fill="#080808"/>
+  <rect width="1200" height="820" fill="url(#grid)"/>
+  <circle cx="600" cy="410" r="282" fill="url(#core)"/>
+  <path d="M250 445C392 282 514 255 676 385C790 476 892 436 1032 272" stroke="#C9FF45" stroke-opacity="0.72" stroke-width="5"/>
+  <path d="M260 500C405 392 514 376 660 442C784 497 910 470 1060 382" stroke="white" stroke-opacity="0.16" stroke-width="3"/>
+  <rect x="116" y="112" width="260" height="126" rx="22" fill="#111111" fill-opacity="0.78" stroke="white" stroke-opacity="0.12"/>
+  <rect x="150" y="146" width="152" height="14" rx="7" fill="#F5F5F5" fill-opacity="0.85"/>
+  <rect x="150" y="190" width="88" height="12" rx="6" fill="#C9FF45"/>
+  <rect x="808" y="560" width="256" height="128" rx="24" fill="#111111" fill-opacity="0.86" stroke="white" stroke-opacity="0.12"/>
+  <circle cx="862" cy="614" r="24" fill="#C9FF45" fill-opacity="0.9"/>
+  <rect x="912" y="598" width="124" height="12" rx="6" fill="#F5F5F5" fill-opacity="0.82"/>
+  <rect x="912" y="638" width="82" height="10" rx="5" fill="#979797" fill-opacity="0.55"/>
+</svg>
