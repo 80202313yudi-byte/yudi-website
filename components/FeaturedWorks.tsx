@@ -1,10 +1,10 @@
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { projects } from "@/data/projects";
 import { MotionReveal } from "@/components/MotionReveal";
 import { ProjectCardLink } from "@/components/ProjectCardLink";
 import { ProjectMedia } from "@/components/ProjectMedia";
 import { ProjectReturnRestorer } from "@/components/ProjectReturnRestorer";
-import { SectionHeading } from "@/components/SectionHeading";
 import { getProjectCardId } from "@/data/projectNavigation";
 
 const projectSpan = [
@@ -20,16 +20,19 @@ export function FeaturedWorks() {
   return (
     <section id="works" className="section-pad">
       <div className="section-shell">
-        <SectionHeading
-          eyebrow="Selected Works"
-          title="精选作品"
-          subtitle={
-            <>
-              这些项目记录了我如何把概念，推进为
-              <span className="phrase-nowrap">可落地成果。</span>
-            </>
-          }
-        />
+        <div className="section-heading mb-8 grid gap-5 md:mb-10 md:grid-cols-[minmax(0,1fr)_minmax(280px,430px)] md:items-end md:gap-10 lg:gap-20">
+          <div>
+            <span className="eyebrow">Case Studies</span>
+            <h2 className="heading-balance section-title mt-5 font-semibold text-text">
+              项目案例
+            </h2>
+          </div>
+          <div className="flex flex-col items-start gap-5 md:items-start">
+            <p className="copy-pretty section-description">
+              从概念到落地，记录我如何把想法推进成真实作品。
+            </p>
+          </div>
+        </div>
 
         <div className="grid auto-rows-fr gap-5 md:grid-cols-2 lg:grid-cols-12">
           {projects.map((project, index) => (
@@ -45,7 +48,7 @@ export function FeaturedWorks() {
                 className={`project-card group flex h-full min-h-[430px] flex-col overflow-hidden rounded-[22px] border border-line bg-card ${
                   index === 0 ? "project-card-primary" : index === 1 ? "project-card-secondary" : ""
                 }`}
-                label={`查看 ${project.title} 案例`}
+                label={`查看 ${project.caseTitle} 案例`}
                 slug={project.slug}
               >
                 <ProjectMedia
@@ -68,14 +71,14 @@ export function FeaturedWorks() {
                         index === 0 ? "text-3xl" : "text-2xl"
                       }`}
                     >
-                      {project.title}
+                      {project.caseTitle}
                     </h3>
                     <p className="copy-pretty mt-3 text-[15px] leading-7 text-[#adadad]">
-                      {project.description}
+                      {project.caseDescription}
                     </p>
                     {index < 2 ? (
                       <p className="copy-pretty mt-4 border-t border-white/[0.07] pt-4 text-xs leading-6 text-[#929292]">
-                        {project.meta}
+                        {project.caseMeta} · {project.year}
                       </p>
                     ) : null}
                   </div>
@@ -87,6 +90,14 @@ export function FeaturedWorks() {
               </ProjectCardLink>
             </MotionReveal>
           ))}
+        </div>
+
+        <div className="case-studies-footer">
+          <p className="case-studies-footer-text">已展示 6 个代表项目</p>
+          <Link href="/works" className="case-studies-all-link">
+            查看全部作品
+            <ArrowUpRight className="case-studies-all-link-icon" size={16} aria-hidden="true" />
+          </Link>
         </div>
         <ProjectReturnRestorer />
       </div>

@@ -1,7 +1,24 @@
-.next/
+# dependencies
 node_modules/
-output/
+
+# environment
+.env
+.env.local
+
+# Next.js and build outputs
+.next/
 out/
+dist/
+build/
+.vercel/
+
+# caches, reports, and local test artifacts
+.turbo/
+.cache/
+coverage/
+output/
 .playwright-cli/
+
+# logs and system files
 *.log
 .DS_Store

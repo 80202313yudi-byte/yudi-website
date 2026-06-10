@@ -5,7 +5,7 @@ export function StatsSection() {
   return (
     <section aria-label="数据概览" className="relative py-8 md:py-10">
       <div className="section-shell">
-        <MotionReveal className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <MotionReveal className="stats-grid grid grid-cols-2 gap-3 lg:grid-cols-4">
           {stats.map((item) => (
             <div
               key={item.label}

@@ -27,7 +27,7 @@ export function MotionReveal({
     <Component
       id={id}
       className={className}
-      initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+      initial={reduceMotion ? false : { opacity: 1, y: 14 }}
       whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.42, delay, ease: [0.22, 1, 0.36, 1] }}

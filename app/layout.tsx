@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ResizePerformanceGuard } from "@/components/ResizePerformanceGuard";
 import "./globals.css";
 
 const siteUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://xn--6kq660n.com");
@@ -33,7 +34,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" data-scroll-behavior="smooth">
-      <body>{children}</body>
+      <body>
+        <ResizePerformanceGuard />
+        {children}
+      </body>
     </html>
   );
 }

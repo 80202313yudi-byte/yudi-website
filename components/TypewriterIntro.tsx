@@ -16,8 +16,8 @@ type Phase = "typing" | "holding" | "deleting";
 export function TypewriterIntro() {
   const reduceMotion = useHydratedReducedMotion();
   const [keywordIndex, setKeywordIndex] = useState(0);
-  const [displayedKeyword, setDisplayedKeyword] = useState("");
-  const [phase, setPhase] = useState<Phase>("typing");
+  const [displayedKeyword, setDisplayedKeyword] = useState(keywords[0]);
+  const [phase, setPhase] = useState<Phase>("holding");
 
   useEffect(() => {
     if (reduceMotion) {

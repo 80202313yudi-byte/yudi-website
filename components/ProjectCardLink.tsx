@@ -10,9 +10,19 @@ type ProjectCardLinkProps = {
   href: string;
   label: string;
   slug: string;
+  ariaHidden?: boolean;
+  tabIndex?: number;
 };
 
-export function ProjectCardLink({ children, className, href, label, slug }: ProjectCardLinkProps) {
+export function ProjectCardLink({
+  children,
+  className,
+  href,
+  label,
+  slug,
+  ariaHidden,
+  tabIndex,
+}: ProjectCardLinkProps) {
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
       return;
@@ -36,7 +46,14 @@ export function ProjectCardLink({ children, className, href, label, slug }: Proj
   };
 
   return (
-    <Link href={href} className={className} aria-label={label} onClick={handleClick}>
+    <Link
+      href={href}
+      className={className}
+      aria-label={label}
+      aria-hidden={ariaHidden}
+      tabIndex={tabIndex}
+      onClick={handleClick}
+    >
       {children}
     </Link>
   );

@@ -23,13 +23,24 @@ export function getProjectCardId(slug: string) {
   return `project-${slug}`;
 }
 
+function normalizeReturnSourcePath(path?: string) {
+  if (!path || path === "/") {
+    return "/";
+  }
+
+  return path.endsWith("/") ? path.slice(0, -1) : path;
+}
+
 export function isValidProjectReturnState(
   state: ProjectReturnState | null,
   slug?: string,
 ): state is ProjectReturnState {
+  const sourcePath = normalizeReturnSourcePath(state?.sourcePath);
+  const validSourcePath = sourcePath === "/" || sourcePath === "/works";
+
   return Boolean(
     state?.fromWorks === true &&
-      state.sourcePath === "/" &&
+      validSourcePath &&
       state.slug &&
       (!slug || state.slug === slug) &&
       Number.isFinite(state.scrollY) &&

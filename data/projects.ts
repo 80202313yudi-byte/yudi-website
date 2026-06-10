@@ -13,6 +13,9 @@ export type ProjectMedia = {
 export type Project = {
   slug: string;
   title: string;
+  caseTitle: string;
+  caseMeta: string;
+  caseDescription: string;
   type: string;
   year: string;
   description: string;
@@ -34,6 +37,9 @@ export const projects: Project[] = [
   {
     slug: "brand-visual-system",
     title: "品牌视觉系统",
+    caseTitle: "VERDE 茶饮品牌视觉系统",
+    caseMeta: "品牌设计 / 包装延展 / 视觉系统",
+    caseDescription: "为茶饮品牌建立从主视觉到包装、物料和线上内容的完整识别系统。",
     type: "品牌视觉",
     year: "2026",
     description: "围绕标志、字体、色彩与版式建立可延展的品牌视觉框架。",
@@ -70,6 +76,9 @@ export const projects: Project[] = [
   {
     slug: "product-catalog-design",
     title: "产品画册设计",
+    caseTitle: "自然与共品牌画册",
+    caseMeta: "Editorial Design / 画册设计 / 信息编排",
+    caseDescription: "通过图文节奏、版式层级和纸质媒介，呈现品牌与自然主题的内容叙事。",
     type: "产品画册",
     year: "2025",
     description: "用强网格和黑白灰画面组织产品信息、卖点和视觉节奏。",
@@ -110,6 +119,9 @@ export const projects: Project[] = [
   {
     slug: "ai-visual-experiment",
     title: "AI 视觉实验",
+    caseTitle: "赛博视觉海报实验",
+    caseMeta: "AI Visual / 视觉实验 / 系列海报",
+    caseDescription: "结合 AI 生成与视觉后期，探索人物、材质和未来感图像的表达方式。",
     type: "AI 视觉",
     year: "2026",
     description: "以生成式图像探索角色、场景和概念视觉的多种方向。",
@@ -146,6 +158,9 @@ export const projects: Project[] = [
   {
     slug: "interface-concept-exploration",
     title: "界面概念探索",
+    caseTitle: "SaaS 数据中台界面设计",
+    caseMeta: "UI/UX Design / 数据可视化 / 后台系统",
+    caseDescription: "为复杂业务数据建立清晰的信息结构和可读的深色界面体验。",
     type: "UI 设计",
     year: "2025",
     description: "为数字产品建立深色界面、信息层级和交互状态。",
@@ -182,6 +197,9 @@ export const projects: Project[] = [
   {
     slug: "short-video-content-packaging",
     title: "短片内容包装",
+    caseTitle: "概念短片关键帧设计",
+    caseMeta: "Motion Design / Key Visual / 内容包装",
+    caseDescription: "为短片内容构建视觉基调、关键画面和可延展的动态包装方向。",
     type: "视频内容",
     year: "2025",
     description: "为短视频与动态内容设计标题、封面和视觉包装系统。",
@@ -218,6 +236,9 @@ export const projects: Project[] = [
   {
     slug: "personal-brand-experiment",
     title: "个人品牌实验",
+    caseTitle: "个人品牌实验",
+    caseMeta: "Personal Brand / 网站设计 / 视觉系统",
+    caseDescription: "围绕个人创作者身份，探索网站、标识和内容表达的一体化视觉系统。",
     type: "个人实验",
     year: "2026",
     description: "结合动漫、游戏、电影与未来科技的视觉练习。",

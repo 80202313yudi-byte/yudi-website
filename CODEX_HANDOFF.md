@@ -59,6 +59,14 @@ No environment variables are currently required.
 
 ## Start And Verify
 
+For cross-device handoff, first read:
+
+```text
+NEXT_CODEX_START_HERE.md
+AGENTS.md
+CODEX_HANDOFF.md
+```
+
 Install and run:
 
 ```bash
@@ -88,6 +96,7 @@ app/
   page.tsx                  Homepage composition
   globals.css               Global design system and responsive styles
   layout.tsx                Root layout and homepage metadata
+  works/page.tsx            Works archive page
   works/[slug]/page.tsx     Dynamic project detail template
   opengraph-image.tsx       Open Graph image
   robots.ts                 Robots configuration
@@ -96,6 +105,7 @@ app/
 components/
   Navbar.tsx                Shared navigation and active-section logic
   Hero.tsx                  Homepage hero
+  HeroWorksWall.tsx         Hero selected-work fragment wall with two marquee rows
   TypewriterIntro.tsx       Hero keyword typewriter
   StatsSection.tsx          Data overview
   FeaturedWorks.tsx         Homepage project grid
@@ -110,10 +120,10 @@ components/
   InterestsSection.tsx      Long-term content directions
   ContactSection.tsx        Homepage contact area
   MagneticLink.tsx          Magnetic effect for selected primary buttons
-  ScrollProgress.tsx        Navigation-bottom page progress line
 
 data/
   projects.ts               Project data, slugs, covers, galleries, and detail content
+  featuredWorks.ts          Hero work-wall order, rows, card sizes, and short copy
   projectNavigation.ts      Project card IDs and session return-state helpers
   site.ts                   Navigation, stats, tags, and contact links
   capabilities.ts           Capability card content
@@ -139,15 +149,25 @@ Detail-page navigation must link back to homepage sections using paths such as `
 ## Existing Interactions
 
 - Fixed blurred navigation with active-section highlighting
-- Thin fluorescent-green scroll progress line under the navigation
+- Desktop navigation is split into a dark `nav-pill` for logo/nav items plus an independent `header-contact-button` link outside the pill; do not wrap the desktop contact button in the nav capsule
+- Navigation no longer has a scroll-progress indicator; keep only the default weak pill border and active-section text highlighting
 - Smooth homepage anchor navigation
 - Hero typewriter rotates only the first-line keyword
+- Homepage Case Studies archive entry uses a restrained secondary capsule CTA below the six project cards, linking to `/works` after users have browsed representative cases
+- Hero work-wall does not include a separate archive link; the `/works` archive entry is concentrated in the formal Case Studies section
+- Homepage and navigation share responsive `--page-max-width` / `--page-padding` container rules so large and ultrawide screens feel more open without unlimited stretching
+- On large screens, the Hero keeps the left-copy/right-work-wall composition, slightly expands the work wall, and caps text and visual widths to preserve hierarchy
+- Ultrawide backgrounds use softer, more distributed green light and side darkening so the page does not look like a small layout floating beside a single empty glow
+- `ResizePerformanceGuard` adds `html.is-resizing` during browser resizing, temporarily disabling transitions, pausing CSS animations, and turning off the nav backdrop blur until resizing settles
+- Hero work-wall marquee remains pure CSS transform animation; it must pause under `html.is-resizing` and resume after resize
+- Avoid `transition: all` and do not animate layout properties such as width, height, padding, margin, gap, or grid-template-columns
 - Project cards use one whole-card link and navigate to unique detail routes
 - Opening a project records its slug and homepage scroll position in `sessionStorage`
 - The detail-page top return button, bottom "继续看作品" CTA, and browser back restore the exact prior homepage position
 - Directly opened detail pages fall back to the matching `#project-{slug}` card anchor
 - Returned cards receive a brief restrained highlight, disabled with `prefers-reduced-motion`
 - Project cover images subtly enlarge on hover
+- Hero work-wall cards keep image zoom clipped inside the media area while card borders, focus rings, and hover glow sit above the image layer
 - Selected primary buttons use a restrained magnetic effect:
   - Desktop fine-pointer devices only
   - Maximum visual displacement: 5px
@@ -158,8 +178,8 @@ Detail-page navigation must link back to homepage sections using paths such as `
 
 Do not apply magnetic behavior to every button. It is currently limited to:
 
-- Top navigation contact button
 - Hero primary button
+- Mobile menu contact button
 - Homepage contact primary button
 
 ## Project Routes
@@ -215,6 +235,8 @@ Rules:
 
 - Hero headline: `把想法，变成可以被看见的作品。`
 - `看见` is the key fluorescent-green phrase and must not split awkwardly
+- Hero supporting copy:
+  - `我帮助品牌与产品，用设计与视觉讲好故事，让创意在真实世界中产生价值与影响力。`
 - Typewriter keywords:
   - AI 视觉
   - 品牌设计
@@ -244,6 +266,11 @@ Rules:
 
 Check at least:
 
+- 3440px
+- 2560px
+- 1920px
+- 1728px
+- 1600px
 - 1440px
 - 1280px
 - 1024px
@@ -253,6 +280,8 @@ Check at least:
 Maintain:
 
 - No horizontal overflow
+- Navigation width and main content width remain aligned
+- Large and ultrawide layouts do not make Hero text, work-wall cards, or stats cards grow without a cap
 - No awkward isolated Chinese characters in headings
 - Mobile menu closes after navigation and locks background scrolling while open
 - Fixed navigation does not cover section headings
@@ -278,6 +307,12 @@ Do not invent commercial clients, project results, metrics, or testimonials.
 
 All required source code, configuration, and local website assets are inside this project folder. There are currently no external absolute-path asset dependencies.
 
+The fastest handoff file for another Codex session is:
+
+```text
+NEXT_CODEX_START_HERE.md
+```
+
 The following generated folders do not need to be transferred because they can be recreated:
 
 ```text
@@ -285,14 +320,30 @@ node_modules/
 .next/
 .playwright-cli/
 out/
+output/
+dist/
+build/
+.turbo/
+.cache/
+coverage/
+.vercel/
 ```
 
 Transfer the remaining project folder contents, then run `npm install`.
+
+If transferring through GitHub instead of copying the folder, commit and push to a non-deploy branch unless the user explicitly asks to publish `main`.
 
 ## Change Log
 
 ### 2026-06-10
 
+- Added `NEXT_CODEX_START_HERE.md` as the quick entry file for another computer/Codex session, including setup commands, current homepage state, key files, verification expectations, and no-publish caution.
+- Reworked the homepage hero into a left-copy/right-work-wall layout. Added `HeroWorksWall` with two quiet CSS marquee rows and reduced-motion/mobile static behavior.
+- Changed the former "精选作品" section into a formal "项目案例 / Case Studies" section with fuller case copy, a static grid, and a "查看全部作品" link to `/works`.
+- Added `/works` archive page, included it in the sitemap, and extended project data with case-specific titles, metadata, and descriptions while preserving `/works/[slug]` detail routes.
+- Updated project return-state validation so project cards opened from `/works` can also return with browser history and preserved scroll position.
+- Fixed blank lower homepage sections by making `MotionReveal` content visible by default and keeping only a restrained vertical reveal motion; this prevents About, capabilities, interests, and contact from becoming transparent if viewport reveal detection or full-page screenshots do not fire.
+- Cleaned local generated artifacts and macOS `.DS_Store` files, expanded `.gitignore` for build outputs/caches/env files, removed the unused `.hero-copy` CSS rule, and declared `@eslint/eslintrc` explicitly for the ESLint FlatCompat config.
 - Refined Chinese copy and typography across the homepage and project details: removed right-aligned body copy, added balanced heading and pretty paragraph wrapping, tightened section descriptions, and protected key phrases from awkward splitting.
 - Loosened the About headline line-height so the two-line Chinese title has more breathing room without affecting the Hero headline.
 - Changed the detail-page bottom CTA from a fixed `/#works` link to a shared return button, with the label `继续看作品`.
@@ -303,12 +354,26 @@ Transfer the remaining project folder contents, then run `npm install`.
 - Connected the project context to `80202313yudi-byte/yudi-website` and documented the existing GitHub Pages domain setup.
 - Confirmed the Chinese custom domain is `于迪.com`, represented by `xn--6kq660n.com`.
 - Configured Next.js static export and GitHub Actions deployment so the new version can fully replace the previous GitHub Pages site.
+- Upgraded the `项目案例 / Case Studies` archive entry from a small text link to a secondary capsule CTA linking to `/works`, with stronger contrast, border/hover/focus states, and mobile-friendly 44px height.
+- Moved the `项目案例 / Case Studies` archive CTA out of the title area and into a centered footer after the six project cards, with helper text `已展示 6 个代表项目`.
+- Removed the duplicate `探索全部作品` link from the Hero work-wall header so the archive action lives only in the formal Case Studies section.
+- Fixed Hero work-wall hover clipping by moving card border/glow to a top-layer pseudo-element, making the card overflow visible, keeping image zoom clipped inside the media wrapper, and adding vertical marquee row safe space for hover/focus states.
+- Added large-screen and ultrawide homepage adaptation: shared responsive page/nav container variables, wider but capped Hero and work-wall sizing, controlled Hero typography, wider stats gaps, and softer distributed background light. Verified 1440, 1600, 1728, 1920, 2560, and 3440px with no horizontal overflow.
+- Optimized resize performance: added the global `ResizePerformanceGuard`, paused transitions and marquee animations while resizing, replaced the Hero blur glow with gradient light, changed the interests hover offset from padding to transform, reduced large-screen breakpoint jumps, and added conservative layout/style containment to complex sections.
+- Split the desktop header into a dark logo/nav pill and an independent fluorescent-green contact button to remove the former double-rounded wrapper effect while preserving mobile menu behavior.
+- Removed the navigation scroll-progress treatment entirely after testing the SVG outline version; the header now relies on its weak default border and active nav text only.
 - Fully replaced the previous static website on `main` and verified the new homepage and project detail pages live at `于迪.com`.
+- Restored the homepage `TypewriterIntro` below the hero supporting copy so the documented rotating AI/brand/content focus line is visible again.
+- Set the typewriter's first static render to `AI 视觉` so the hero never shows an empty keyword slot before hydration.
+- Removed the hero load-in opacity/position animation so the static-export first viewport renders the headline immediately instead of briefly showing a blank hero area during hydration.
+- Normalized `.heading-balance` letter spacing to `0` for steadier Chinese typography, and reduced touch-screen hover movement on project cards and surfaces.
+- Slightly widened mobile hero work-wall cards so the horizontal gallery feels more intentional without adding instructional UI text.
+- Normalized project return-state source paths so `/works` and `/works/` are treated the same, preserving return-to-archive behavior in static local previews.
 
 ### 2026-06-09
 
 - Added restrained magnetic interaction to the top contact button, hero primary button, and homepage contact primary button.
 - Removed mouse spotlight effects from the hero visual, About illustration, and contact panel.
-- Added a thin page-scroll progress line beneath the fixed navigation.
+- Added a thin page-scroll progress line beneath the fixed navigation; this was later removed in favor of a cleaner header without scroll-progress feedback.
 - Established a flexible project media system supporting original-color covers, multiple aspect ratios, contain/cover modes, and bright-image surfaces.
 - Refined project cards, detail routes, responsive layouts, typography, content hierarchy, accessibility, and SEO.

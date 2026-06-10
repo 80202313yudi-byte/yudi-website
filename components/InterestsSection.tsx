@@ -4,7 +4,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 
 export function InterestsSection() {
   return (
-    <section className="section-pad">
+    <section className="section-pad research-section">
       <div className="section-shell">
         <SectionHeading
           eyebrow="Research Directions"

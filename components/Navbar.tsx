@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MagneticLink } from "@/components/MagneticLink";
-import { ScrollProgress } from "@/components/ScrollProgress";
 import { projectReturnStateKey } from "@/data/projectNavigation";
 import { navItems } from "@/data/site";
 
@@ -118,71 +117,68 @@ export function Navbar({ detailPage = false }: NavbarProps) {
   const getHref = (href: string) => (detailPage ? `/${href}` : href);
 
   return (
-    <header className="fixed left-0 right-0 top-4 z-50 px-4">
-      <nav
-        aria-label="主导航"
-        className="nav-surface relative mx-auto flex max-w-6xl items-center justify-between overflow-hidden rounded-full border border-line bg-[#101010]/90 px-4 py-2 shadow-panel backdrop-blur-xl md:px-5"
-      >
-        <Link
-          href={detailPage ? "/" : "#home"}
-          className="flex items-center gap-2 text-sm font-semibold text-text"
-          onClick={() => handleNavigation("#home")}
-        >
-          <span
-            className="grid h-7 w-7 place-items-center rounded-full bg-accent text-xs font-black text-background"
-            aria-hidden="true"
+    <header className="fixed left-0 right-0 top-4 z-50">
+      <div className="site-nav-shell header-shell">
+        <nav aria-label="主导航" className="nav-pill nav-surface">
+          <Link
+            href={detailPage ? "/" : "#home"}
+            className="flex items-center gap-2 text-sm font-semibold text-text"
+            onClick={() => handleNavigation("#home")}
           >
-            F
-          </span>
-          FISHDI
-        </Link>
-
-        <div className="hidden items-center gap-1 md:flex">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={getHref(item.href)}
-              aria-current={active === item.href ? "page" : undefined}
-              onClick={() => handleNavigation(item.href)}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                active === item.href
-                  ? "bg-accent/12 text-accent"
-                  : "text-[#c1c1c1] hover:bg-white/5 hover:text-text"
-              }`}
+            <span
+              className="grid h-7 w-7 place-items-center rounded-full bg-accent text-xs font-black text-background"
+              aria-hidden="true"
             >
-              {item.label}
-            </Link>
-          ))}
-        </div>
+              F
+            </span>
+            FISHDI
+          </Link>
 
-        <div className="hidden md:block">
-          <MagneticLink
-            href={getHref("#contact")}
-            aria-current={active === "#contact" ? "page" : undefined}
-            onClick={() => handleNavigation("#contact")}
+          <div className="nav-links hidden items-center gap-1 md:flex">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={getHref(item.href)}
+                aria-current={active === item.href ? "page" : undefined}
+                onClick={() => handleNavigation(item.href)}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                  active === item.href
+                    ? "bg-accent/12 text-accent"
+                    : "text-[#c1c1c1] hover:bg-white/5 hover:text-text"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            aria-label={open ? "关闭菜单" : "打开菜单"}
+            aria-expanded={open}
+            aria-controls="mobile-navigation"
+            className="grid h-11 w-11 place-items-center rounded-full border border-line text-text transition hover:border-accent md:hidden"
+            onClick={() => setOpen((value) => !value)}
           >
-            联系我
-          </MagneticLink>
-        </div>
+            {open ? <X size={18} /> : <Menu size={18} />}
+          </button>
 
-        <button
-          type="button"
-          aria-label={open ? "关闭菜单" : "打开菜单"}
-          aria-expanded={open}
-          aria-controls="mobile-navigation"
-          className="grid h-11 w-11 place-items-center rounded-full border border-line text-text transition hover:border-accent md:hidden"
-          onClick={() => setOpen((value) => !value)}
+        </nav>
+
+        <Link
+          href={getHref("#contact")}
+          aria-current={active === "#contact" ? "page" : undefined}
+          className="header-contact-button hidden md:inline-flex"
+          onClick={() => handleNavigation("#contact")}
         >
-          {open ? <X size={18} /> : <Menu size={18} />}
-        </button>
-
-        <ScrollProgress />
-      </nav>
+          联系我
+        </Link>
+      </div>
 
       {open ? (
         <div
           id="mobile-navigation"
-          className="mx-auto mt-3 max-w-6xl rounded-3xl border border-line bg-[#111111] p-3 shadow-panel md:hidden"
+          className="site-nav-shell mt-3 rounded-3xl border border-line bg-[#111111] p-3 shadow-panel md:hidden"
         >
           {navItems.map((item) => (
             <Link
