@@ -35,6 +35,8 @@ body {
   font-family: var(--font-geist-sans);
   font-size: clamp(0.9375rem, 0.9rem + 0.12vw, 1rem);
   line-height: 1.7;
+  letter-spacing: 0;
+  word-break: normal;
 }
 
 body::before {
@@ -83,6 +85,46 @@ img {
 .section-pad {
   padding-top: 4rem;
   padding-bottom: 4rem;
+}
+
+.heading-balance {
+  text-wrap: balance;
+  line-break: strict;
+  word-break: normal;
+  overflow-wrap: normal;
+  letter-spacing: -0.018em;
+}
+
+.copy-pretty {
+  max-width: 36em;
+  text-align: left;
+  text-wrap: pretty;
+  line-break: strict;
+  word-break: normal;
+  overflow-wrap: break-word;
+  letter-spacing: 0;
+}
+
+.phrase-nowrap {
+  white-space: nowrap;
+}
+
+.title-line {
+  display: block;
+}
+
+.section-title {
+  max-width: 13.5em;
+  font-size: clamp(2.25rem, 3.6vw, 3.25rem);
+  line-height: 1.06;
+}
+
+.section-description {
+  width: min(100%, 34em);
+  margin-left: auto;
+  color: #bdbdbd;
+  font-size: clamp(0.9375rem, 0.9rem + 0.28vw, 1.0625rem);
+  line-height: 1.75;
 }
 
 .eyebrow {
@@ -242,8 +284,8 @@ button:focus-visible {
 }
 
 .hero-heading {
-  font-size: clamp(3.75rem, 5.2vw, 4.75rem);
-  line-height: 1.06;
+  font-size: clamp(3.35rem, 4.9vw, 4.45rem);
+  line-height: 1.12;
 }
 
 .hero-copy {
@@ -254,8 +296,10 @@ button:focus-visible {
 
 .typewriter-intro {
   color: #b7b7b7;
-  font-size: 1.0625rem;
+  max-width: 36em;
+  font-size: clamp(1rem, 0.96rem + 0.22vw, 1.125rem);
   line-height: 1.65;
+  letter-spacing: 0;
 }
 
 .typewriter-line {
@@ -286,6 +330,8 @@ button:focus-visible {
 .typewriter-fixed-line {
   margin-top: 0.75rem;
   white-space: nowrap;
+  text-wrap: pretty;
+  line-break: strict;
 }
 
 .typewriter-cursor {
@@ -343,6 +389,29 @@ button:focus-visible {
 
 .project-card {
   touch-action: manipulation;
+}
+
+.project-card-anchor {
+  scroll-margin-top: var(--nav-offset);
+}
+
+.project-card-anchor.project-card--returned .project-card {
+  animation: project-return-highlight 720ms ease-out;
+}
+
+@keyframes project-return-highlight {
+  0%,
+  100% {
+    border-color: var(--color-line);
+    box-shadow: none;
+  }
+
+  28% {
+    border-color: rgba(201, 255, 69, 0.58);
+    box-shadow:
+      0 0 0 1px rgba(201, 255, 69, 0.11),
+      0 0 34px rgba(201, 255, 69, 0.12);
+  }
 }
 
 .project-card:hover {
@@ -477,6 +546,18 @@ button:focus-visible {
   padding: 1.5rem 0;
 }
 
+.about-title {
+  max-width: 13em;
+  font-size: clamp(2.45rem, 3.75vw, 3rem);
+  line-height: 1.18;
+}
+
+.about-copy {
+  width: min(100%, 38em);
+  font-size: clamp(0.9375rem, 0.9rem + 0.28vw, 1.125rem);
+  line-height: 1.78;
+}
+
 .about-visual {
   box-shadow: 0 32px 90px rgba(0, 0, 0, 0.28);
 }
@@ -584,6 +665,12 @@ button:focus-visible {
   border-left: 2px solid rgba(201, 255, 69, 0.52);
 }
 
+.detail-title {
+  max-width: 12em;
+  font-size: clamp(2.75rem, 5.4vw, 5rem);
+  line-height: 1.04;
+}
+
 .case-navigation {
   min-height: 112px;
   transition:
@@ -600,7 +687,7 @@ button:focus-visible {
 
 @media (max-width: 1279px) {
   .hero-heading {
-    font-size: clamp(3.5rem, 5.2vw, 4rem);
+    font-size: clamp(3.15rem, 5vw, 4rem);
   }
 }
 
@@ -611,7 +698,7 @@ button:focus-visible {
   }
 
   .hero-heading {
-    font-size: clamp(3.35rem, 7vw, 4rem);
+    font-size: clamp(3rem, 6.6vw, 3.75rem);
   }
 }
 
@@ -632,8 +719,8 @@ button:focus-visible {
   }
 
   .hero-heading {
-    font-size: clamp(2.9rem, 12vw, 3.45rem);
-    line-height: 1.08;
+    font-size: clamp(2.55rem, 10.6vw, 3.2rem);
+    line-height: 1.12;
   }
 
   .hero-copy {
@@ -651,7 +738,28 @@ button:focus-visible {
 
   .typewriter-fixed-line {
     margin-top: 0.625rem;
-    white-space: nowrap;
+    white-space: normal;
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 8vw, 2.65rem);
+    line-height: 1.1;
+  }
+
+  .section-description {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .about-title {
+    max-width: 100%;
+    font-size: clamp(2rem, 8vw, 2.4rem);
+    line-height: 1.18;
+  }
+
+  .detail-title {
+    font-size: clamp(2.5rem, 10vw, 3.25rem);
+    line-height: 1.08;
   }
 
   .project-card-primary,
@@ -706,6 +814,10 @@ button:focus-visible {
 
   .project-card:active .project-media-image {
     filter: none;
+  }
+
+  .project-card-anchor.project-card--returned .project-card {
+    animation: none;
   }
 
   .case-skeleton::after {

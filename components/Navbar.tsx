@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MagneticLink } from "@/components/MagneticLink";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { projectReturnStateKey } from "@/data/projectNavigation";
 import { navItems } from "@/data/site";
 
 const contactItem = { label: "联系我", href: "#contact" };
@@ -104,6 +105,12 @@ export function Navbar({ detailPage = false }: NavbarProps) {
   const handleNavigation = (href: string) => {
     if (!detailPage) {
       setActive(href);
+    } else {
+      try {
+        sessionStorage.removeItem(projectReturnStateKey);
+      } catch {
+        // Explicit navigation must remain available when browser storage is unavailable.
+      }
     }
     setOpen(false);
   };

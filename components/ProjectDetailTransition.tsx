@@ -4,11 +4,17 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from "react";
 import { useHydratedReducedMotion } from "@/components/useHydratedReducedMotion";
-import { projectReturnMarkerKey } from "@/data/projectNavigation";
+import {
+  getProjectCardId,
+  isValidProjectReturnState,
+  projectReturnStateKey,
+  type ProjectReturnState,
+} from "@/data/projectNavigation";
 
 type ProjectDetailTransitionProps = {
   children: ReactNode;
   className?: string;
+  projectSlug: string;
 };
 
 type ProjectTransitionContextValue = {
@@ -18,24 +24,29 @@ type ProjectTransitionContextValue = {
 
 const ProjectTransitionContext = createContext<ProjectTransitionContextValue | null>(null);
 
-function hasRecentReturnMarker() {
+function readReturnState() {
   try {
-    const marker = JSON.parse(sessionStorage.getItem(projectReturnMarkerKey) ?? "null") as {
-      createdAt?: number;
-      path?: string;
-    } | null;
-
-    return Boolean(
-      marker?.path === "/" &&
-        marker.createdAt &&
-        Date.now() - marker.createdAt < 2 * 60 * 60 * 1000,
-    );
+    return JSON.parse(sessionStorage.getItem(projectReturnStateKey) ?? "null") as
+      | ProjectReturnState
+      | null;
   } catch {
-    return false;
+    return null;
   }
 }
 
-export function ProjectDetailTransition({ children, className }: ProjectDetailTransitionProps) {
+function clearReturnState() {
+  try {
+    sessionStorage.removeItem(projectReturnStateKey);
+  } catch {
+    // The slug anchor fallback remains available when browser storage is unavailable.
+  }
+}
+
+export function ProjectDetailTransition({
+  children,
+  className,
+  projectSlug,
+}: ProjectDetailTransitionProps) {
   const router = useRouter();
   const reduceMotion = useHydratedReducedMotion();
   const [exiting, setExiting] = useState(false);
@@ -46,30 +57,24 @@ export function ProjectDetailTransition({ children, className }: ProjectDetailTr
     }
 
     setExiting(true);
+    const returnState = readReturnState();
 
-    const sameOriginReferrer = (() => {
+    if (isValidProjectReturnState(returnState, projectSlug)) {
       try {
-        return Boolean(document.referrer && new URL(document.referrer).origin === window.location.origin);
+        sessionStorage.setItem(
+          projectReturnStateKey,
+          JSON.stringify({ ...returnState, returnRequested: true }),
+        );
       } catch {
-        return false;
+        // Native history return remains available when browser storage is unavailable.
       }
-    })();
-    const canGoBack =
-      window.history.length > 1 && (hasRecentReturnMarker() || sameOriginReferrer);
-
-    try {
-      sessionStorage.removeItem(projectReturnMarkerKey);
-    } catch {
-      // Returning must remain available when browser storage is unavailable.
-    }
-
-    if (canGoBack) {
       router.back();
       return;
     }
 
-    router.push("/#works");
-  }, [exiting, router]);
+    clearReturnState();
+    router.push(`/#${getProjectCardId(projectSlug)}`);
+  }, [exiting, projectSlug, router]);
 
   const contextValue = useMemo(() => ({ exiting, returnToWorks }), [exiting, returnToWorks]);
 

@@ -9,7 +9,12 @@ export function InterestsSection() {
         <SectionHeading
           eyebrow="Research Directions"
           title="我正在研究的内容方向"
-          subtitle="它们持续影响我的视觉判断、叙事偏好，也构成下一阶段内容创作的长期线索。"
+          subtitle={
+            <>
+              它们持续影响我的视觉判断与叙事方式，也构成下一阶段
+              <span className="phrase-nowrap">内容创作的线索。</span>
+            </>
+          }
         />
 
         <div className="interest-list border-y border-white/10">
@@ -22,8 +27,10 @@ export function InterestsSection() {
               <span className="text-4xl font-semibold text-[#c1d994]">
                 0{index + 1}
               </span>
-              <h3 className="text-2xl font-semibold text-text">{item.title}</h3>
-              <p className="max-w-xl text-[15px] leading-7 text-[#b5b5b5]">{item.description}</p>
+              <h3 className="heading-balance text-2xl font-semibold text-text">{item.title}</h3>
+              <p className="copy-pretty max-w-[34em] text-[15px] leading-7 text-[#b5b5b5]">
+                {item.description}
+              </p>
             </MotionReveal>
           ))}
         </div>

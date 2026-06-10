@@ -1,20 +1,22 @@
+import type { ReactNode } from "react";
+
 type SectionHeadingProps = {
   eyebrow: string;
   title: string;
-  subtitle?: string;
+  subtitle?: ReactNode;
 };
 
 export function SectionHeading({ eyebrow, title, subtitle }: SectionHeadingProps) {
   return (
-    <div className="mb-8 flex flex-col gap-5 md:mb-10 md:flex-row md:items-end md:justify-between">
+    <div className="section-heading mb-8 grid gap-5 md:mb-10 md:grid-cols-[minmax(0,1fr)_minmax(280px,430px)] md:items-end md:gap-10 lg:gap-20">
       <div>
         <span className="eyebrow">{eyebrow}</span>
-        <h2 className="mt-5 max-w-3xl text-4xl font-semibold leading-tight text-text md:text-5xl">
+        <h2 className="heading-balance section-title mt-5 font-semibold text-text">
           {title}
         </h2>
       </div>
       {subtitle ? (
-        <p className="max-w-lg text-base leading-8 text-[#bdbdbd] md:text-right">{subtitle}</p>
+        <p className="copy-pretty section-description">{subtitle}</p>
       ) : null}
     </div>
   );

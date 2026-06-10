@@ -100,7 +100,10 @@ components/
   StatsSection.tsx          Data overview
   FeaturedWorks.tsx         Homepage project grid
   ProjectMedia.tsx          Unified project image display system
-  ProjectCardLink.tsx       Whole-card project link behavior
+  ProjectCardLink.tsx       Whole-card project link and return-state capture
+  ProjectReturnRestorer.tsx Homepage history and scroll-position restoration
+  ProjectDetailTransition.tsx Detail-page return behavior and route transition
+  ProjectHomeLink.tsx       Explicit detail-page links that clear return state
   AboutSection.tsx          About area
   CapabilitiesSection.tsx   Services and deliverables
   InterestsSection.tsx      Long-term content directions
@@ -110,7 +113,7 @@ components/
 
 data/
   projects.ts               Project data, slugs, covers, galleries, and detail content
-  projectNavigation.ts      Previous and next project helpers
+  projectNavigation.ts      Project card IDs and session return-state helpers
   site.ts                   Navigation, stats, tags, and contact links
   capabilities.ts           Capability card content
 
@@ -139,6 +142,10 @@ Detail-page navigation must link back to homepage sections using paths such as `
 - Smooth homepage anchor navigation
 - Hero typewriter rotates only the first-line keyword
 - Project cards use one whole-card link and navigate to unique detail routes
+- Opening a project records its slug and homepage scroll position in `sessionStorage`
+- The detail-page return button and browser back restore the exact prior homepage position
+- Directly opened detail pages fall back to the matching `#project-{slug}` card anchor
+- Returned cards receive a brief restrained highlight, disabled with `prefers-reduced-motion`
 - Project cover images subtly enlarge on hover
 - Selected primary buttons use a restrained magnetic effect:
   - Desktop fine-pointer devices only
@@ -216,9 +223,21 @@ Rules:
 - Fixed typewriter second line:
   - `持续探索技术、审美与叙事之间的可能性。`
 - About headline:
-  - `我把多年的视觉设计经验，带进 AI 内容创作。`
+  - `把设计经验，带进 AI 内容创作。`
+- Featured works description:
+  - `这些项目记录了我如何把概念，推进为可落地成果。`
+- Interests description:
+  - `它们持续影响我的视觉判断与叙事方式，也构成下一阶段内容创作的线索。`
 - Interests section is framed as long-term research directions, not a skill grid
 - Capabilities describe what can be delivered, not only what tools are known
+
+## Chinese Typography Rules
+
+- Keep Chinese body copy left-aligned. A text block may sit on the right side of a layout, but the copy itself should not be right-aligned or justified.
+- Use `.heading-balance` for large headings and `.copy-pretty` for paragraphs that need stable Chinese wrapping.
+- Protect important short phrases with `.phrase-nowrap` instead of adding many `<br>` tags.
+- Keep ordinary body copy near `36em`; section descriptions use `width: min(100%, 34em)` and About copy uses `width: min(100%, 38em)`.
+- Avoid `word-break: break-all`, fixed paragraph heights, invisible spacing, or overflow clipping as text-layout fixes.
 
 ## Responsive And Accessibility Requirements
 
@@ -250,7 +269,6 @@ The site is structurally complete, but these items still need the owner's real c
 - Expand project detail narratives with real project context, process, deliverables, and outcomes
 - Replace `hello@example.com` with the real contact email
 - Replace placeholder social links in `data/site.ts`
-- Confirm production domain and set `NEXT_PUBLIC_SITE_URL` when deployment is planned
 - Optionally replace the abstract About portrait while preserving the current layout
 
 Do not invent commercial clients, project results, metrics, or testimonials.
@@ -265,7 +283,7 @@ The following generated folders do not need to be transferred because they can b
 node_modules/
 .next/
 .playwright-cli/
-output/
+out/
 ```
 
 Transfer the remaining project folder contents, then run `npm install`.
@@ -274,6 +292,10 @@ Transfer the remaining project folder contents, then run `npm install`.
 
 ### 2026-06-10
 
+- Refined Chinese copy and typography across the homepage and project details: removed right-aligned body copy, added balanced heading and pretty paragraph wrapping, tightened section descriptions, and protected key phrases from awkward splitting.
+- Loosened the About headline line-height so the two-line Chinese title has more breathing room without affecting the Hero headline.
+- Reworked project-detail return navigation to prefer browser history, restore the originating card scroll position, and fall back to the matching project-card anchor for direct detail-page visits.
+- Added per-card `project-{slug}` anchors, temporary session return state, reduced-motion-safe return feedback, and protection against stale return state during explicit detail-page navigation.
 - Added `AGENTS.md` and this persistent handoff document for cross-device Codex collaboration.
 - Added instructions requiring future Codex sessions to update this document after completed changes.
 - Connected the project context to `80202313yudi-byte/yudi-website` and documented the existing GitHub Pages domain setup.

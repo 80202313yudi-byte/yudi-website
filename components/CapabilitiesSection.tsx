@@ -33,8 +33,12 @@ export function CapabilitiesSection() {
                 <div className="grid h-11 w-11 place-items-center rounded-[14px] bg-white/[0.055] text-[#c0d98a]">
                   <Icon size={22} aria-hidden="true" />
                 </div>
-                <h3 className="mt-8 text-xl font-semibold text-text">{item.title}</h3>
-                <p className="mt-4 text-[15px] leading-7 text-[#b5b5b5]">{item.description}</p>
+                <h3 className="heading-balance mt-8 text-xl font-semibold text-text">
+                  {item.title}
+                </h3>
+                <p className="copy-pretty mt-4 text-[15px] leading-7 text-[#b5b5b5]">
+                  {item.description}
+                </p>
               </MotionReveal>
             );
           })}

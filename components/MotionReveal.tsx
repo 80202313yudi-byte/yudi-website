@@ -8,6 +8,7 @@ type MotionRevealProps = {
   children: ReactNode;
   className?: string;
   delay?: number;
+  id?: string;
   as?: "div" | "section" | "article";
 };
 
@@ -15,6 +16,7 @@ export function MotionReveal({
   children,
   className,
   delay = 0,
+  id,
   as = "div",
 }: MotionRevealProps) {
   const reduceMotion = useHydratedReducedMotion();
@@ -23,6 +25,7 @@ export function MotionReveal({
 
   return (
     <Component
+      id={id}
       className={className}
       initial={reduceMotion ? false : { opacity: 0, y: 16 }}
       whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}

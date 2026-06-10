@@ -9,11 +9,16 @@ export function AboutSection() {
         <MotionReveal className="about-layout grid items-center gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16">
           <div className="flex h-full flex-col justify-center">
             <span className="eyebrow">About FISHDI</span>
-            <h2 className="mt-6 max-w-3xl text-4xl font-semibold leading-tight text-text md:text-5xl">
-              我把多年的视觉设计经验，带进 AI 内容创作。
+            <h2 className="about-title heading-balance mt-6 font-semibold text-text">
+              <span className="title-line">
+                把<span className="phrase-nowrap">设计经验，</span>
+              </span>
+              <span className="title-line">
+                带进 <span className="phrase-nowrap">AI 内容创作。</span>
+              </span>
             </h2>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-[#b8b8b8] md:text-lg">
-              我是 FISHDI，过去持续从事品牌视觉、画册、海报与产品内容设计。现在，我把这些关于构图、信息与叙事的经验带进 AI 视觉和数字内容创作，让新工具真正服务于清晰的表达。
+            <p className="about-copy copy-pretty mt-6 text-[#b8b8b8]">
+              我是 FISHDI。过去几年，我持续从事品牌视觉、画册、海报与产品内容设计。现在，我把构图、信息层级与叙事节奏的经验，带进 AI 视觉创作。
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               {skillTags.map((tag) => (
@@ -37,7 +42,7 @@ export function AboutSection() {
             />
             <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-6 border-t border-white/15 pt-4 text-xs text-[#bcbcbc]">
               <strong className="text-sm tracking-normal text-text">FISHDI</strong>
-              <span className="text-right leading-5">
+              <span className="leading-5 text-left">
                 Visual systems
                 <br />
                 AI narratives

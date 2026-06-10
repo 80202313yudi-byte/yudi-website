@@ -3,7 +3,9 @@ import { projects } from "@/data/projects";
 import { MotionReveal } from "@/components/MotionReveal";
 import { ProjectCardLink } from "@/components/ProjectCardLink";
 import { ProjectMedia } from "@/components/ProjectMedia";
+import { ProjectReturnRestorer } from "@/components/ProjectReturnRestorer";
 import { SectionHeading } from "@/components/SectionHeading";
+import { getProjectCardId } from "@/data/projectNavigation";
 
 const projectSpan = [
   "lg:col-span-8",
@@ -21,7 +23,12 @@ export function FeaturedWorks() {
         <SectionHeading
           eyebrow="Selected Works"
           title="精选作品"
-          subtitle="从品牌视觉到 AI 内容，以下项目记录了我如何把概念推进为可落地的成果。"
+          subtitle={
+            <>
+              这些项目记录了我如何把概念，推进为
+              <span className="phrase-nowrap">可落地成果。</span>
+            </>
+          }
         />
 
         <div className="grid auto-rows-fr gap-5 md:grid-cols-2 lg:grid-cols-12">
@@ -29,8 +36,9 @@ export function FeaturedWorks() {
             <MotionReveal
               key={project.title}
               as="article"
+              id={getProjectCardId(project.slug)}
               delay={index * 0.04}
-              className={projectSpan[index]}
+              className={`project-card-anchor ${projectSpan[index]}`}
             >
               <ProjectCardLink
                 href={`/works/${project.slug}`}
@@ -38,6 +46,7 @@ export function FeaturedWorks() {
                   index === 0 ? "project-card-primary" : index === 1 ? "project-card-secondary" : ""
                 }`}
                 label={`查看 ${project.title} 案例`}
+                slug={project.slug}
               >
                 <ProjectMedia
                   media={project.cover}
@@ -54,12 +63,18 @@ export function FeaturedWorks() {
                     <span className="text-xs text-[#9f9f9f]">{project.nature}</span>
                   </div>
                   <div>
-                    <h3 className={`font-semibold text-text ${index === 0 ? "text-3xl" : "text-2xl"}`}>
+                    <h3
+                      className={`heading-balance font-semibold text-text ${
+                        index === 0 ? "text-3xl" : "text-2xl"
+                      }`}
+                    >
                       {project.title}
                     </h3>
-                    <p className="mt-3 text-[15px] leading-7 text-[#adadad]">{project.description}</p>
+                    <p className="copy-pretty mt-3 text-[15px] leading-7 text-[#adadad]">
+                      {project.description}
+                    </p>
                     {index < 2 ? (
-                      <p className="mt-4 border-t border-white/[0.07] pt-4 text-xs leading-6 text-[#929292]">
+                      <p className="copy-pretty mt-4 border-t border-white/[0.07] pt-4 text-xs leading-6 text-[#929292]">
                         {project.meta}
                       </p>
                     ) : null}
@@ -73,6 +88,7 @@ export function FeaturedWorks() {
             </MotionReveal>
           ))}
         </div>
+        <ProjectReturnRestorer />
       </div>
     </section>
   );

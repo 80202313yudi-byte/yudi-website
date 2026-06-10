@@ -35,7 +35,7 @@ export const interests = [
     description: "拆解光影、构图与节奏，把抽象情绪转化为清晰画面。",
   },
   {
-    title: "AI与未来科技",
+    title: "AI 与未来科技",
     description: "持续验证新工具如何扩展创意判断，而不取代设计判断。",
   },
 ];

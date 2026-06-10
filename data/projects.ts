@@ -110,7 +110,7 @@ export const projects: Project[] = [
   {
     slug: "ai-visual-experiment",
     title: "AI 视觉实验",
-    type: "AI视觉",
+    type: "AI 视觉",
     year: "2026",
     description: "以生成式图像探索角色、场景和概念视觉的多种方向。",
     cover: {
@@ -146,7 +146,7 @@ export const projects: Project[] = [
   {
     slug: "interface-concept-exploration",
     title: "界面概念探索",
-    type: "UI设计",
+    type: "UI 设计",
     year: "2025",
     description: "为数字产品建立深色界面、信息层级和交互状态。",
     cover: {

@@ -43,7 +43,7 @@ export function ProjectDetailIntro({ project }: ProjectDetailIntroProps) {
       <div className="mt-10 grid items-end gap-10 lg:grid-cols-[1fr_320px]">
         <div>
           <motion.h1
-            className="max-w-4xl text-5xl font-semibold leading-tight text-text md:text-7xl"
+            className="detail-title heading-balance font-semibold text-text"
             initial={initial}
             animate={animate}
             transition={transition(0)}
@@ -62,7 +62,7 @@ export function ProjectDetailIntro({ project }: ProjectDetailIntroProps) {
           </motion.div>
 
           <motion.p
-            className="mt-6 max-w-3xl text-base leading-8 text-[#bdbdbd] md:text-lg"
+            className="copy-pretty mt-6 max-w-[36em] text-base leading-8 text-[#bdbdbd] md:text-lg"
             initial={initial}
             animate={animate}
             transition={transition(0.1)}
