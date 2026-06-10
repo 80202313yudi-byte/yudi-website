@@ -1279,6 +1279,16 @@ button:focus-visible {
     --nav-offset: 88px;
   }
 
+  .nav-pill {
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    padding: 0.5rem 0.875rem 0.5rem 1rem;
+  }
+
+  .mobile-menu-button {
+    justify-self: end;
+  }
+
   .section-pad {
     padding-top: 3rem;
     padding-bottom: 3rem;

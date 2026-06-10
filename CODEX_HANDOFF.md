@@ -369,6 +369,7 @@ If transferring through GitHub instead of copying the folder, commit and push to
 - Normalized `.heading-balance` letter spacing to `0` for steadier Chinese typography, and reduced touch-screen hover movement on project cards and surfaces.
 - Slightly widened mobile hero work-wall cards so the horizontal gallery feels more intentional without adding instructional UI text.
 - Normalized project return-state source paths so `/works` and `/works/` are treated the same, preserving return-to-archive behavior in static local previews.
+- Fixed the mobile header menu button placement by giving the nav pill a two-column mobile layout so the hamburger stays aligned to the right edge.
 
 ### 2026-06-09
 

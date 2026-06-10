@@ -157,12 +157,11 @@ export function Navbar({ detailPage = false }: NavbarProps) {
             aria-label={open ? "关闭菜单" : "打开菜单"}
             aria-expanded={open}
             aria-controls="mobile-navigation"
-            className="grid h-11 w-11 place-items-center rounded-full border border-line text-text transition hover:border-accent md:hidden"
+            className="mobile-menu-button grid h-11 w-11 place-items-center rounded-full border border-line text-text transition hover:border-accent md:hidden"
             onClick={() => setOpen((value) => !value)}
           >
             {open ? <X size={18} /> : <Menu size={18} />}
           </button>
-
         </nav>
 
         <Link
