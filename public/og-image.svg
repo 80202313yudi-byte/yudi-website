@@ -1,0 +1,16 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0A0A0A"/>
+  <path d="M0 0H1200V630H0V0Z" fill="url(#grid)"/>
+  <rect x="76" y="72" width="1048" height="486" rx="36" fill="#111111" stroke="white" stroke-opacity="0.1"/>
+  <text x="128" y="234" fill="#FAFAFA" font-family="Arial, Helvetica, sans-serif" font-size="86" font-weight="700" letter-spacing="-4">FISHDI</text>
+  <text x="128" y="316" fill="#FAFAFA" fill-opacity="0.72" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="500">AI Visual Designer &amp; Content Creator</text>
+  <text x="128" y="386" fill="#FAFAFA" fill-opacity="0.55" font-family="Arial, Helvetica, sans-serif" font-size="28">于迪个人作品集 · 品牌视觉 · AI视觉 · 数字内容创作</text>
+  <circle cx="948" cy="252" r="116" fill="#FAFAFA" fill-opacity="0.08"/>
+  <circle cx="948" cy="252" r="72" stroke="#FAFAFA" stroke-opacity="0.28" stroke-width="2"/>
+  <path d="M852 372C914 320 983 306 1064 344" stroke="#FAFAFA" stroke-opacity="0.5" stroke-width="4" stroke-linecap="round"/>
+  <defs>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" stroke="white" stroke-opacity="0.045"/>
+    </pattern>
+  </defs>
+</svg>

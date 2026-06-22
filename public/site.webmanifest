@@ -1,0 +1,16 @@
+{
+  "name": "FISHDI 个人作品集",
+  "short_name": "FISHDI",
+  "description": "于迪 / FISHDI 的个人作品集，展示品牌视觉、AI 视觉、画册、UI 和数字内容创作。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

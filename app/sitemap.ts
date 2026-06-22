@@ -1,30 +1,39 @@
 import type { MetadataRoute } from "next";
-import { projects } from "@/data/projects";
+import { siteConfig } from "@/lib/metadata";
+import { projects } from "@/lib/projects";
 
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://xn--6kq660n.com";
-  const projectPages = projects.map((project) => ({
-    url: `${siteUrl}/works/${project.slug}`,
-    lastModified: new Date("2026-06-09"),
-    changeFrequency: "monthly" as const,
-    priority: 0.8,
-  }));
-
-  return [
+  const baseUrl = siteConfig.url;
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: siteUrl,
-      lastModified: new Date("2026-06-09"),
-      changeFrequency: "monthly",
+      url: baseUrl,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: `${siteUrl}/works`,
-      lastModified: new Date("2026-06-10"),
-      changeFrequency: "monthly",
+      url: `${baseUrl}/projects`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
       priority: 0.9,
     },
-    ...projectPages,
+    {
+      url: `${baseUrl}/about`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+  ];
+
+  return [
+    ...staticRoutes,
+    ...projects.map((project) => ({
+      url: `${baseUrl}/projects/${project.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
   ];
 }

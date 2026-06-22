@@ -1,27 +1,23 @@
-import { AboutSection } from "@/components/AboutSection";
-import { CapabilitiesSection } from "@/components/CapabilitiesSection";
-import { ContactSection } from "@/components/ContactSection";
-import { FeaturedWorks } from "@/components/FeaturedWorks";
-import { Footer } from "@/components/Footer";
-import { Hero } from "@/components/Hero";
-import { InterestsSection } from "@/components/InterestsSection";
-import { Navbar } from "@/components/Navbar";
-import { StatsSection } from "@/components/StatsSection";
+import { ContactCard } from "@/components/contact/contact-card";
+import { Hero } from "@/components/hero/hero";
+import { Projects } from "@/components/projects/projects";
+import { createMetadata, siteConfig } from "@/lib/metadata";
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
-export default function Home() {
+export const metadata: Metadata = createMetadata({
+  title: "首页",
+  description: `欢迎来到${siteConfig.name}。${siteConfig.description}`,
+  path: "/",
+});
+
+export default function HomePage(): ReactNode {
   return (
-    <>
-      <Navbar />
-      <main>
-        <Hero />
-        <StatsSection />
-        <FeaturedWorks />
-        <AboutSection />
-        <CapabilitiesSection />
-        <InterestsSection />
-        <ContactSection />
-      </main>
-      <Footer />
-    </>
+    <main id="main-content" className="flex flex-1 flex-col gap-20 sm:gap-28">
+      <Hero />
+      <Projects withHeadline viewMoreVisible />
+      <ContactCard />
+      <div className="h-12 sm:h-16" />
+    </main>
   );
 }

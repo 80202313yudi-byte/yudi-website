@@ -1,20 +1,32 @@
 # Codex Collaboration Instructions
 
+Before modifying this project, read `CODEX_HANDOFF.md`.
+
 After every completed project change:
 
-1. Run the checks appropriate to the change. For frontend changes, normally run:
+1. Update `CODEX_HANDOFF.md` if architecture, behavior, design, content,
+   routes, assets, dependencies, deployment, or known issues changed.
+2. Add a concise dated entry to the `Change Log` section.
+3. Run the checks appropriate to the change. For frontend changes, normally run:
    - `npm run lint`
+   - `npm run typecheck`
    - `npm run build`
-   - Browser checks at desktop and mobile widths
-2. Do not publish or deploy unless the user explicitly asks.
+4. Do not publish or deploy unless the user explicitly asks.
 
-Do not maintain a separate handoff or change-log document unless the user asks for one again.
+Preserve the current template visual direction unless the user explicitly asks
+for a redesign:
 
-Preserve the existing visual direction unless the user explicitly requests a redesign:
+- Minimal React Bits Pro portfolio style
+- Centered capsule navigation
+- Large serif typography and generous whitespace
+- Subtle borders, restrained cards, and soft motion
+- Project evidence and real images should remain the visual priority
+- Real project images must keep original color; do not apply green filters
 
-- Black background with restrained fluorescent green accents
-- Minimal, premium, future-facing visual language
-- Clear editorial hierarchy and generous but controlled spacing
-- Works and real project evidence take priority over decorative effects
-- Preserve original colors of real project images; do not apply green filters
-- Avoid excessive cards, neon effects, tiny low-contrast text, and template-like micro-labels
+Avoid:
+
+- Dashboard or resume-site aesthetics
+- Heavy neon effects
+- Overly complex case-study pages unless requested
+- Tiny low-contrast Chinese body text
+- Reintroducing `/works` routes; this version uses `/projects/[slug]`
