@@ -52,6 +52,8 @@ No environment variables are required for local development.
 - Production domain: `https://xn--6kq660n.com/` / `https://于迪.com/`
 - Deployment: GitHub Pages through `.github/workflows/deploy-pages.yml`
 - Static export is enabled in `next.config.ts`
+- Production URLs are generated without trailing slashes. Use `/projects` and
+  `/projects/[slug]` rather than `/projects/`.
 - Custom domain file: `public/CNAME`
 
 ## Local Commands
@@ -154,3 +156,5 @@ When real project assets are ready, replace images and captions there first.
 - 2026-06-22: Added lightweight `/projects/[slug]` project detail pages, shared
   project data in `lib/projects.ts`, static GitHub Pages deployment config,
   `public/CNAME`, and this handoff file.
+- 2026-06-22: Published through GitHub Pages and aligned static export URLs to
+  no-trailing-slash paths for the production domain.
