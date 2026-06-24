@@ -3,6 +3,8 @@
 import { Mesh, Program, Renderer, Transform, Triangle } from "ogl";
 import { useEffect, useRef, type ReactNode } from "react";
 
+import { useReducedMotion } from "@/lib/motion";
+
 export type ShaderFlowProps = {
   className?: string;
   flowSpeed?: [number, number];
@@ -129,12 +131,15 @@ function readBgColor(el: HTMLElement): [number, number, number] {
 export function ShaderFlow(props: ShaderFlowProps): ReactNode {
   const ref = useRef<HTMLDivElement | null>(null);
   const pr = useRef(props);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     pr.current = props;
   });
 
   useEffect(() => {
+    if (prefersReducedMotion) return;
+
     const el = ref.current;
     if (!el) return;
 
@@ -259,13 +264,21 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
       if (gl.canvas.parentElement === el) el.removeChild(gl.canvas);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   return (
     <div
       ref={ref}
       aria-hidden="true"
       className={props.className ?? "absolute inset-0 h-full w-full grayscale"}
+      style={
+        prefersReducedMotion
+          ? {
+              background:
+                "radial-gradient(ellipse 90% 70% at 50% 0%, color-mix(in srgb, var(--brand) 16%, transparent), transparent 68%)",
+            }
+          : undefined
+      }
     />
   );
 }

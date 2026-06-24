@@ -12,6 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { FadeIn } from "@/components/ui/motion-primitives";
+import { NoOrphanText } from "@/components/ui/no-orphan-text";
 import { projects, type Project, type ProjectIcon } from "@/lib/projects";
 
 export type ProjectsProps = {
@@ -34,12 +35,14 @@ export function Projects({
               精选项目
             </h2>
             <p className="max-w-[33ch] text-[18px] leading-[1.45] tracking-tight text-foreground/65 sm:text-[20px]">
-              从品牌视觉到 AI 内容，记录我如何把概念推进成可见的作品。
+              从品牌视觉到{" "}
+              <span className="font-medium text-brand-strong">AI 内容</span>
+              ，记录我如何把概念推进成<span className="whitespace-nowrap">可见的作品</span>。
             </p>
           </FadeIn>
         ) : null}
 
-        <div className="columns-1 gap-6 md:columns-2 md:gap-7">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-7">
           {items.map((project, index) => (
             <ProjectCard key={project.slug} project={project} index={index} />
           ))}
@@ -49,7 +52,7 @@ export function Projects({
           <div className="mt-12 flex justify-center sm:mt-16">
             <Link
               href="/projects"
-              className="border border-foreground/8 focus-ring group inline-flex cursor-pointer items-center gap-2 rounded-xl bg-background px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-foreground/5"
+              className="focus-ring group inline-flex cursor-pointer items-center gap-2 rounded-xl border border-foreground/8 bg-background px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-brand-line hover:bg-brand-soft hover:text-brand-strong"
             >
               查看全部
               <ArrowRight
@@ -75,18 +78,22 @@ function ProjectCard({
   return (
     <FadeIn
       delay={Math.min(index * 0.06, 0.3)}
-      className="mb-6 break-inside-avoid md:mb-7"
+      className="h-full"
     >
       <Link
         href={`/projects/${project.slug}`}
-        className="project-card focus-ring flex cursor-pointer flex-col gap-4 rounded-3xl border border-foreground/8 bg-background p-3 text-left no-underline sm:p-3.5"
+        data-project-card={project.slug}
+        className="project-card focus-ring flex h-full cursor-pointer flex-col gap-4 rounded-3xl border border-foreground/8 bg-background p-3 text-left no-underline sm:p-3.5"
         aria-label={`查看${project.category}项目详情`}
       >
         <header className="flex items-center gap-2.5 px-1 pt-2">
-          <span className="border-foreground/10 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-background">
-            <Icon className="h-3.5 w-3.5 text-foreground" aria-hidden="true" />
+          <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-brand-line bg-brand-soft">
+            <Icon
+              className="h-3.5 w-3.5 text-brand-strong"
+              aria-hidden="true"
+            />
           </span>
-          <span className="text-sm font-medium tracking-tight text-foreground">
+          <span className="text-sm font-medium tracking-tight text-brand-strong">
             {project.iconLabel}
           </span>
         </header>
@@ -110,14 +117,14 @@ function ProjectCard({
 
         <div className="flex flex-col gap-2.5 px-1 pb-1">
           <h3 className="text-[20px] font-medium leading-[1.2] tracking-tight text-foreground sm:text-[22px]">
-            {project.title}
+            <NoOrphanText text={project.title} />
           </h3>
           <p className="text-[14px] leading-normal tracking-tight text-foreground/65 sm:text-[15px]">
-            {project.description}
+            <NoOrphanText text={project.description} tailLength={5} />
           </p>
         </div>
 
-        <p className="px-1 pb-2 text-[12px] tracking-tight text-foreground/50">
+        <p className="mt-auto border-t border-brand-line/60 px-1 pt-3 pb-2 text-[12px] tracking-tight text-foreground/50">
           {project.meta}
         </p>
       </Link>

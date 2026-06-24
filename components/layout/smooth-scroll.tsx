@@ -3,6 +3,7 @@
 import { useEffect, type ReactNode } from "react";
 import Lenis from "lenis";
 import { features } from "@/lib/config";
+import { useReducedMotion } from "@/lib/motion";
 
 const LENIS_OPTIONS = {
   duration: 1.6,
@@ -19,23 +20,20 @@ export function SmoothScroll({
 }: {
   children: ReactNode;
 }): ReactNode {
+  const prefersReducedMotion = useReducedMotion();
+
   useEffect(() => {
-    if (!features.smoothScroll) return;
-
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (prefersReducedMotion) return;
+    if (!features.smoothScroll || prefersReducedMotion) return;
 
     const lenis = new Lenis(LENIS_OPTIONS);
+    let rafId = 0;
 
     function raf(time: number): void {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
 
-    const rafId = requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     function handleAnchorClick(e: MouseEvent): void {
       const target = e.target as HTMLElement;
@@ -59,7 +57,7 @@ export function SmoothScroll({
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   return <>{children}</>;
 }

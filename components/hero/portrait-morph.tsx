@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Renderer, Program, Mesh, Triangle, Transform, Texture } from "ogl";
 
+import { useReducedMotion } from "@/lib/motion";
+
 export type PortraitMorphProps = {
   srcA: string;
   srcB: string;
@@ -120,8 +122,9 @@ export function PortraitMorph({
   alt,
   className,
 }: PortraitMorphProps): ReactNode {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLButtonElement | null>(null);
   const [ready, setReady] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
   const hoverRef = useRef(false);
   const progressRef = useRef(0);
   const originRef = useRef<[number, number]>([0.5, 0.5]);
@@ -131,6 +134,16 @@ export function PortraitMorph({
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+
+    hoverRef.current = false;
+    progressRef.current = 0;
+    lastPointerRef.current = null;
+
+    if (prefersReducedMotion) return;
+
+    const supportsFineHover = window.matchMedia(
+      "(hover: hover) and (pointer: fine)"
+    ).matches;
 
     const renderer = new Renderer({
       alpha: true,
@@ -203,6 +216,12 @@ export function PortraitMorph({
     let last = performance.now();
     let time = 0;
     let running = true;
+    let intersectionObserver: IntersectionObserver | null = null;
+    let demoDelay = 0;
+    let demoRelease = 0;
+    let touchDemoRequested = false;
+    let texturesReady = false;
+    let touchDemoPlayed = false;
 
     const tick = () => {
       if (!running) return;
@@ -226,11 +245,34 @@ export function PortraitMorph({
       raf = requestAnimationFrame(tick);
     };
 
+    const playTouchDemo = () => {
+      if (
+        supportsFineHover ||
+        !touchDemoRequested ||
+        !texturesReady ||
+        touchDemoPlayed
+      ) {
+        return;
+      }
+      touchDemoPlayed = true;
+      demoDelay = window.setTimeout(() => {
+        if (!running) return;
+        originRef.current = [0.58, 0.5];
+        directionRef.current = [-1, 0];
+        hoverRef.current = true;
+        demoRelease = window.setTimeout(() => {
+          hoverRef.current = false;
+        }, 900);
+      }, 280);
+    };
+
     Promise.all([loadImage(srcA, texA), loadImage(srcB, texB)])
       .then(() => {
         setReady(true);
         last = performance.now();
         tick();
+        texturesReady = true;
+        playTouchDemo();
       })
       .catch(() => {
         setReady(false);
@@ -284,39 +326,96 @@ export function PortraitMorph({
       lastPointerRef.current = { x, y, t: performance.now() };
     };
 
-    container.addEventListener("pointerenter", onPointerEnter);
-    container.addEventListener("pointerleave", onPointerLeave);
-    container.addEventListener("pointermove", onPointerMove);
+    const setOriginFromPoint = (clientX?: number, clientY?: number) => {
+      const rect = container.getBoundingClientRect();
+      const hasPoint =
+        typeof clientX === "number" &&
+        typeof clientY === "number" &&
+        Number.isFinite(clientX) &&
+        Number.isFinite(clientY);
+      const x = hasPoint ? (clientX - rect.left) / rect.width : 0.56;
+      const y = hasPoint ? 1 - (clientY - rect.top) / rect.height : 0.52;
+      const clampedX = Math.min(Math.max(x, 0.08), 0.92);
+      const clampedY = Math.min(Math.max(y, 0.08), 0.92);
+      originRef.current = [clampedX, clampedY];
+      directionRef.current = computeEdgeDirection(clampedX, clampedY);
+    };
+
+    const onClick = (e: MouseEvent) => {
+      if (supportsFineHover && e.detail !== 0) return;
+      setOriginFromPoint(e.clientX, e.clientY);
+      hoverRef.current = !(hoverRef.current || progressRef.current > 0.5);
+    };
+
+    if (supportsFineHover) {
+      container.addEventListener("pointerenter", onPointerEnter);
+      container.addEventListener("pointerleave", onPointerLeave);
+      container.addEventListener("pointermove", onPointerMove);
+    } else {
+      intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (!entry?.isIntersecting) return;
+          intersectionObserver?.disconnect();
+          touchDemoRequested = true;
+          playTouchDemo();
+        },
+        { threshold: 0.45 }
+      );
+      intersectionObserver.observe(container);
+    }
+
+    container.addEventListener("click", onClick);
 
     return () => {
       running = false;
       cancelAnimationFrame(raf);
+      window.clearTimeout(demoDelay);
+      window.clearTimeout(demoRelease);
+      intersectionObserver?.disconnect();
       ro.disconnect();
       container.removeEventListener("pointerenter", onPointerEnter);
       container.removeEventListener("pointerleave", onPointerLeave);
       container.removeEventListener("pointermove", onPointerMove);
+      container.removeEventListener("click", onClick);
       const ext = gl.getExtension("WEBGL_lose_context");
       if (ext) ext.loseContext();
       if (canvas.parentNode === container) container.removeChild(canvas);
     };
-  }, [srcA, srcB]);
+  }, [srcA, srcB, prefersReducedMotion]);
+
+  const showFallback = !ready || prefersReducedMotion;
 
   return (
-    <div
+    <button
       ref={containerRef}
-      role="img"
-      aria-label={alt}
-      className={className}
-      style={{ position: "relative", width: "100%", height: "100%", filter: "grayscale(100%)" }}
+      type="button"
+      aria-label={
+        prefersReducedMotion ? alt : `${alt}，点击可切换头像状态`
+      }
+      className={`focus-ring ${className ?? ""}`}
+      style={{
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        filter: "grayscale(100%)",
+        display: "block",
+        cursor: prefersReducedMotion ? "default" : "pointer",
+        appearance: "none",
+        border: 0,
+        padding: 0,
+        background: "transparent",
+      }}
     >
-      {!ready ? (
+      {showFallback ? (
         <img
           src={srcA}
-          alt={alt}
+          alt=""
+          aria-hidden="true"
           draggable={false}
           className="absolute inset-0 h-full w-full select-none object-cover"
         />
       ) : null}
-    </div>
+    </button>
   );
 }

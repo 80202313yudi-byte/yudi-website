@@ -3,31 +3,26 @@
 import { RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
+import { useReducedMotion } from "@/lib/motion";
+
 type Chip = {
   label: string;
-  slug: string;
+  short: string;
   bg: string;
   fg: string;
-  iconUrl?: string;
 };
 
 const CHIPS: Chip[] = [
-  {
-    label: "Figma",
-    slug: "figma",
-    bg: "#1f1f1f",
-    fg: "#ffffff",
-    iconUrl: "https://svgl.app/library/figma.svg",
-  },
-  { label: "Photoshop", slug: "adobephotoshop", bg: "#001D34", fg: "#ffffff" },
-  { label: "Illustrator", slug: "adobeillustrator", bg: "#311500", fg: "#ffffff" },
-  { label: "Premiere Pro", slug: "adobepremierepro", bg: "#1B123D", fg: "#ffffff" },
-  { label: "Canva", slug: "canva", bg: "#00C4CC", fg: "#ffffff" },
-  { label: "ChatGPT", slug: "openai", bg: "#111111", fg: "#ffffff" },
-  { label: "Midjourney", slug: "midjourney", bg: "#0AE448", fg: "#0a0a0a" },
-  { label: "Notion", slug: "notion", bg: "#181717", fg: "#ffffff" },
-  { label: "Next.js", slug: "nextdotjs", bg: "#0a0a0a", fg: "#ffffff" },
-  { label: "Pinterest", slug: "pinterest", bg: "#E60023", fg: "#ffffff" },
+  { label: "Figma", short: "Fi", bg: "#1f1f1f", fg: "#ffffff" },
+  { label: "Photoshop", short: "Ps", bg: "#001D34", fg: "#ffffff" },
+  { label: "Illustrator", short: "Ai", bg: "#311500", fg: "#ffffff" },
+  { label: "Premiere Pro", short: "Pr", bg: "#1B123D", fg: "#ffffff" },
+  { label: "Canva", short: "Ca", bg: "#00C4CC", fg: "#ffffff" },
+  { label: "ChatGPT", short: "GPT", bg: "#111111", fg: "#ffffff" },
+  { label: "Midjourney", short: "MJ", bg: "#1f1f1f", fg: "#ffffff" },
+  { label: "Notion", short: "No", bg: "#181717", fg: "#ffffff" },
+  { label: "Next.js", short: "Nx", bg: "#0a0a0a", fg: "#ffffff" },
+  { label: "Pinterest", short: "Pi", bg: "#E60023", fg: "#ffffff" },
 ];
 
 const CHIP_RADIUS = 14;
@@ -46,8 +41,14 @@ export function Stack(): ReactNode {
   const measureRef = useRef<HTMLDivElement | null>(null);
   const chipRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [resetKey, setResetKey] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
+  const stackFrameClass = prefersReducedMotion
+    ? "border-foreground/5 bg-foreground/2 dark:bg-foreground/5 relative min-h-40 rounded-4xl border sm:min-h-64"
+    : "border-foreground/5 bg-foreground/2 dark:bg-foreground/5 relative h-40 overflow-hidden rounded-4xl border sm:h-64";
 
   useEffect(() => {
+    if (prefersReducedMotion) return;
+
     const container = containerRef.current;
     const measure = measureRef.current;
     if (!container || !measure) return;
@@ -208,7 +209,7 @@ export function Stack(): ReactNode {
       cancelled = true;
       cleanup?.();
     };
-  }, [resetKey]);
+  }, [resetKey, prefersReducedMotion]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -218,49 +219,59 @@ export function Stack(): ReactNode {
         </h3>
       </div>
 
-      <div className="border-foreground/5 bg-foreground/2 dark:bg-foreground/5 relative h-40 overflow-hidden rounded-4xl border sm:h-64">
-        <button
-          type="button"
-          onClick={() => setResetKey((k) => k + 1)}
-          aria-label="重置创作工具"
-          className="focus-ring border-foreground/8 bg-background text-foreground/70 hover:text-foreground absolute top-3 right-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-xl border transition-colors"
-        >
-          <RotateCcw
-            className="h-4 w-4"
-            strokeWidth={2.25}
-            aria-hidden="true"
-          />
-        </button>
-
-        <div
-          ref={measureRef}
-          aria-hidden="true"
-          className="pointer-events-none invisible absolute top-0 left-0 flex flex-wrap gap-2"
-        >
-          {CHIPS.map((chip) => (
-            <ChipPill key={`m-${chip.label}`} chip={chip} />
-          ))}
-        </div>
-
-        <div
-          ref={containerRef}
-          className="absolute inset-0 cursor-grab select-none"
-          style={{ touchAction: "none" }}
-        >
-          {CHIPS.map((chip, i) => (
-            <div
-              key={`${resetKey}-${chip.label}`}
-              ref={(el) => {
-                chipRefs.current[i] = el;
-              }}
-              data-stack-chip
-              className="pointer-events-none absolute top-0 left-0 will-change-transform"
-              style={{ transform: "translate3d(-9999px, -9999px, 0)" }}
+      <div className={stackFrameClass}>
+        {prefersReducedMotion ? (
+          <div className="flex h-full flex-wrap content-center items-center justify-center gap-2 p-4">
+            {CHIPS.map((chip) => (
+              <ChipPill key={chip.label} chip={chip} />
+            ))}
+          </div>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => setResetKey((k) => k + 1)}
+              aria-label="重置创作工具"
+              className="focus-ring border-foreground/8 bg-background text-foreground/70 hover:text-foreground absolute top-3 right-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-xl border transition-colors"
             >
-              <ChipPill chip={chip} />
+              <RotateCcw
+                className="h-4 w-4"
+                strokeWidth={2.25}
+                aria-hidden="true"
+              />
+            </button>
+
+            <div
+              ref={measureRef}
+              aria-hidden="true"
+              className="pointer-events-none invisible absolute top-0 left-0 flex flex-wrap gap-2"
+            >
+              {CHIPS.map((chip) => (
+                <ChipPill key={`m-${chip.label}`} chip={chip} />
+              ))}
             </div>
-          ))}
-        </div>
+
+            <div
+              ref={containerRef}
+              className="absolute inset-0 cursor-grab select-none"
+              style={{ touchAction: "none" }}
+            >
+              {CHIPS.map((chip, i) => (
+                <div
+                  key={`${resetKey}-${chip.label}`}
+                  ref={(el) => {
+                    chipRefs.current[i] = el;
+                  }}
+                  data-stack-chip
+                  className="pointer-events-none absolute top-0 left-0 will-change-transform"
+                  style={{ transform: "translate3d(-9999px, -9999px, 0)" }}
+                >
+                  <ChipPill chip={chip} />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
@@ -281,14 +292,9 @@ function ChipPill({ chip }: { chip: Chip }): ReactNode {
         style={{ borderRadius: `${ICON_RADIUS}px` }}
         aria-hidden="true"
       >
-        <img
-          src={chip.iconUrl ?? `https://cdn.simpleicons.org/${chip.slug}`}
-          alt=""
-          width={18}
-          height={18}
-          className="h-5 w-5"
-          draggable={false}
-        />
+        <span className="text-[12px] font-bold leading-none text-neutral-950">
+          {chip.short}
+        </span>
       </span>
       <span>{chip.label}</span>
     </div>

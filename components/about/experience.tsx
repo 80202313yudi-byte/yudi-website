@@ -4,6 +4,8 @@ import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState, type ReactNode } from "react";
 
+import { useReducedMotion } from "@/lib/motion";
+
 type Entry = {
   company: string;
   role: string;
@@ -17,7 +19,7 @@ const ENTRIES: Entry[] = [
     company: "AI 视觉创作",
     role: "个人创作者",
     period: "2025 – 至今",
-    brand: "#7CFF6B",
+    brand: "#2F2F2F",
   },
   {
     company: "品牌视觉设计",
@@ -53,7 +55,7 @@ const ENTRIES: Entry[] = [
     company: "动漫 / 游戏 / 电影",
     role: "长期内容兴趣",
     period: "持续关注",
-    brand: "#0AE448",
+    brand: "#4B5563",
   },
 ];
 
@@ -63,6 +65,7 @@ const ROW_GAP = 8;
 
 export function Experience(): ReactNode {
   const [open, setOpen] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
   const collapsedHeight =
     Math.floor(COLLAPSED_COUNT) * ROW_HEIGHT +
     Math.floor(COLLAPSED_COUNT) * ROW_GAP +
@@ -85,7 +88,11 @@ export function Experience(): ReactNode {
           animate={{
             height: open ? "auto" : collapsedHeight,
           }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          transition={
+            prefersReducedMotion
+              ? { duration: 0 }
+              : { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+          }
           style={{ overflow: "hidden" }}
         >
           <ul className="flex flex-col gap-2">
@@ -103,7 +110,9 @@ export function Experience(): ReactNode {
                   <span className="text-foreground/65 mt-0.5 text-[14px] tracking-tight sm:text-[15px]">
                     {entry.role}
                     <span className="text-foreground/30 mx-2">•</span>
-                    <span className="text-foreground/55">{entry.period}</span>
+                    <span className="whitespace-nowrap text-foreground/55">
+                      {entry.period}
+                    </span>
                   </span>
                 </div>
               </li>
@@ -111,14 +120,14 @@ export function Experience(): ReactNode {
           </ul>
         </motion.div>
 
-        <AnimatePresence>
+        <AnimatePresence initial={!prefersReducedMotion}>
           {!open && (
             <motion.div
               key="fade"
-              initial={{ opacity: 0 }}
+              initial={prefersReducedMotion ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.25 }}
               aria-hidden="true"
               className="pointer-events-none absolute inset-x-0 bottom-0"
               style={{
@@ -148,7 +157,7 @@ export function Experience(): ReactNode {
             {open ? "收起" : `展开 ${hiddenCount} 项`}
             <motion.span
               animate={{ rotate: open ? 180 : 0 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.25 }}
               className="inline-flex"
             >
               <ChevronDown className="h-4 w-4" aria-hidden="true" />

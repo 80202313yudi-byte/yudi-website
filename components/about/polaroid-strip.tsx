@@ -1,81 +1,251 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
-import { useRef, useSyncExternalStore, type ReactNode } from "react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
+import { motion } from "motion/react";
+import { useSyncExternalStore, type ReactNode } from "react";
 
-import { DottedPattern } from "@/components/ui/dotted-pattern";
+import { useReducedMotion } from "@/lib/motion";
 
-type Polaroid = {
-  id: string;
+type CapabilityKind =
+  | "composition"
+  | "hierarchy"
+  | "storytelling"
+  | "identity"
+  | "ai-visual"
+  | "delivery";
+
+type Capability = {
+  number: string;
+  title: string;
+  english: string;
+  description: string;
   rotate: number;
+  kind: CapabilityKind;
 };
 
-const PHOTOS: Polaroid[] = [
-  { id: "a", rotate: -8 },
-  { id: "b", rotate: 6 },
-  { id: "c", rotate: -4 },
-  { id: "d", rotate: 7 },
-  { id: "e", rotate: -6 },
-  { id: "f", rotate: 5 },
+const CAPABILITIES: Capability[] = [
+  {
+    number: "01",
+    title: "构图",
+    english: "Composition",
+    description: "平衡画面重心",
+    rotate: -6,
+    kind: "composition",
+  },
+  {
+    number: "02",
+    title: "层级",
+    english: "Hierarchy",
+    description: "建立阅读顺序",
+    rotate: 4,
+    kind: "hierarchy",
+  },
+  {
+    number: "03",
+    title: "叙事",
+    english: "Storytelling",
+    description: "组织观看节奏",
+    rotate: -3,
+    kind: "storytelling",
+  },
+  {
+    number: "04",
+    title: "品牌",
+    english: "Identity",
+    description: "统一识别线索",
+    rotate: 5,
+    kind: "identity",
+  },
+  {
+    number: "05",
+    title: "AI 视觉",
+    english: "AI Visual",
+    description: "扩展视觉方向",
+    rotate: -4,
+    kind: "ai-visual",
+  },
+  {
+    number: "06",
+    title: "交付",
+    english: "Delivery",
+    description: "推进可用成果",
+    rotate: 4,
+    kind: "delivery",
+  },
 ];
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const CARD_CLASS =
+  "group relative aspect-[3/4] w-[clamp(8.4rem,14vw,11rem)] shrink-0 overflow-hidden rounded-2xl border-[5px] border-neutral-300/35 bg-white p-1.5 shadow-[0_12px_30px_rgba(10,10,10,0.035)] dark:border-white/12 dark:bg-neutral-900 dark:shadow-none";
 
-function PolaroidCard({
-  photo,
-  index,
-}: {
-  photo: Polaroid;
-  index: number;
-}): ReactNode {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const sx = useSpring(mx, { stiffness: 220, damping: 18, mass: 0.6 });
-  const sy = useSpring(my, { stiffness: 220, damping: 18, mass: 0.6 });
-  const tx = useTransform(sx, (v) => `${v}px`);
-  const ty = useTransform(sy, (v) => `${v}px`);
+function CapabilityArtwork({ kind }: { kind: CapabilityKind }): ReactNode {
+  if (kind === "composition") {
+    return (
+      <div className="relative h-full w-full" aria-hidden="true">
+        <span className="border-foreground/20 absolute inset-[18%] rounded-sm border" />
+        <span className="border-foreground/10 absolute top-[18%] bottom-[18%] left-1/2 border-l" />
+        <span className="border-foreground/10 absolute top-1/2 right-[18%] left-[18%] border-t" />
+        <span className="border-brand-line bg-brand-soft absolute top-[28%] right-[25%] h-5 w-5 rounded-full border" />
+      </div>
+    );
+  }
 
-  const handleMove = (e: React.PointerEvent<HTMLDivElement>): void => {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const dx = e.clientX - cx;
-    const dy = e.clientY - cy;
-    const max = 18;
-    const k = 0.25;
-    mx.set(Math.max(-max, Math.min(max, dx * k)));
-    my.set(Math.max(-max, Math.min(max, dy * k)));
-  };
+  if (kind === "hierarchy") {
+    return (
+      <div
+        className="flex h-full w-full flex-col justify-center gap-2.5 px-[18%]"
+        aria-hidden="true"
+      >
+        <span className="bg-foreground/70 h-1.5 w-4/5 rounded-full" />
+        <span className="bg-foreground/20 h-px w-full" />
+        <span className="bg-foreground/15 h-px w-3/4" />
+        <span className="bg-brand h-px w-1/2" />
+      </div>
+    );
+  }
 
-  const handleLeave = (): void => {
-    mx.set(0);
-    my.set(0);
-  };
+  if (kind === "storytelling") {
+    return (
+      <div className="relative h-full w-full" aria-hidden="true">
+        <span className="bg-foreground/15 absolute top-1/2 right-[18%] left-[18%] h-px -rotate-12" />
+        <span className="border-foreground/35 absolute top-[34%] left-[20%] h-2.5 w-2.5 rounded-full border bg-white dark:bg-neutral-900" />
+        <span className="bg-brand absolute top-[49%] left-[46%] h-2.5 w-2.5 rounded-full" />
+        <span className="border-foreground/35 absolute right-[20%] bottom-[31%] h-2.5 w-2.5 rounded-full border bg-white dark:bg-neutral-900" />
+      </div>
+    );
+  }
+
+  if (kind === "identity") {
+    return (
+      <div className="relative h-full w-full" aria-hidden="true">
+        <span className="border-foreground/25 absolute top-[27%] left-[27%] h-[38%] w-[38%] rounded-sm border" />
+        <span className="border-brand-line bg-brand-soft absolute right-[25%] bottom-[26%] h-[34%] w-[34%] rounded-sm border" />
+        <span className="bg-brand absolute top-[32%] left-[32%] h-2 w-2" />
+      </div>
+    );
+  }
+
+  if (kind === "ai-visual") {
+    return (
+      <div
+        className="relative flex h-full w-full items-center justify-center"
+        aria-hidden="true"
+      >
+        <div className="absolute inset-[20%] grid grid-cols-4 gap-2 opacity-35">
+          {Array.from({ length: 16 }, (_, index) => (
+            <span
+              key={index}
+              className="bg-foreground/35 m-auto h-1 w-1 rounded-full"
+            />
+          ))}
+        </div>
+        <Sparkles
+          className="text-brand-strong relative h-9 w-9"
+          strokeWidth={1.35}
+        />
+      </div>
+    );
+  }
 
   return (
-    <motion.div
-      ref={ref}
-      onPointerMove={handleMove}
-      onPointerLeave={handleLeave}
-      initial={{ opacity: 0, y: -120, filter: "blur(18px)", rotate: photo.rotate }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)", rotate: photo.rotate }}
+    <div
+      className="relative flex h-full w-full items-center justify-center"
+      aria-hidden="true"
+    >
+      <span className="border-foreground/20 h-[48%] w-[42%] rounded-sm border" />
+      <span className="border-brand-line absolute h-[34%] w-[30%] translate-x-2 translate-y-2 rounded-sm border" />
+      <ArrowUpRight
+        className="text-brand-strong absolute h-5 w-5 translate-x-6 -translate-y-7"
+        strokeWidth={1.5}
+      />
+    </div>
+  );
+}
+
+function CapabilityCardContent({
+  capability,
+}: {
+  capability: Capability;
+}): ReactNode {
+  return (
+    <div className="border-foreground/6 bg-background/45 flex h-full flex-col rounded-xl border px-3.5 py-3.5 sm:px-4 sm:py-4">
+      <div className="flex items-center justify-between">
+        <span className="text-brand-strong font-mono text-[11px] font-semibold sm:text-xs">
+          {capability.number}
+        </span>
+        <span
+          className="bg-brand h-1.5 w-1.5 rounded-full"
+          aria-hidden="true"
+        />
+      </div>
+
+      <div className="min-h-0 flex-1">
+        <CapabilityArtwork kind={capability.kind} />
+      </div>
+
+      <div className="border-foreground/8 border-t pt-3">
+        <div className="flex items-baseline justify-between gap-2">
+          <p className="text-foreground text-[17px] font-semibold tracking-tight sm:text-[19px]">
+            {capability.title}
+          </p>
+          <span className="text-foreground/38 hidden text-[9px] tracking-[0.08em] uppercase sm:inline">
+            {capability.english}
+          </span>
+        </div>
+        <p className="text-foreground/48 group-hover:text-foreground/68 mt-1 hidden min-h-4 text-[11px] leading-4 transition-colors duration-300 lg:block">
+          {capability.description}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function MotionCapabilityCard({
+  capability,
+  index,
+}: {
+  capability: Capability;
+  index: number;
+}): ReactNode {
+  return (
+    <motion.article
+      initial={{
+        opacity: 0,
+        y: -90,
+        filter: "blur(14px)",
+        rotate: capability.rotate,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        filter: "blur(0px)",
+        rotate: capability.rotate,
+      }}
+      whileHover={{ y: -6, rotate: capability.rotate * 0.65 }}
       transition={{
-        duration: 0.9,
-        delay: 0.05 + index * 0.08,
+        duration: 0.8,
+        delay: 0.04 + index * 0.07,
         ease: EASE,
       }}
-      style={{
-        x: tx,
-        y: ty,
-        rotate: photo.rotate,
-      }}
-      className="relative aspect-[3/4] w-[clamp(6rem,11vw,9rem)] shrink-0 overflow-hidden rounded-2xl border-6 border-neutral-300/40 bg-white p-1.5 dark:border-white/15 dark:bg-neutral-900"
+      className={CARD_CLASS}
     >
-      <DottedPattern className="relative h-full w-full overflow-hidden rounded-xl" />
-    </motion.div>
+      <CapabilityCardContent capability={capability} />
+    </motion.article>
+  );
+}
+
+function StaticCapabilityCard({
+  capability,
+}: {
+  capability: Capability;
+}): ReactNode {
+  return (
+    <article
+      style={{ transform: `rotate(${capability.rotate}deg)` }}
+      className={CARD_CLASS}
+    >
+      <CapabilityCardContent capability={capability} />
+    </article>
   );
 }
 
@@ -85,16 +255,33 @@ export function PolaroidStrip(): ReactNode {
     () => true,
     () => false
   );
+  const prefersReducedMotion = useReducedMotion();
 
   if (!mounted) {
-    return <div aria-hidden="true" className="h-[clamp(8rem,15vw,12rem)] w-full" />;
+    return (
+      <div aria-hidden="true" className="h-[clamp(17rem,18vw,21rem)] w-full" />
+    );
   }
 
   return (
-    <div className="flex flex-wrap w-full items-start justify-center gap-1 px-4 sm:gap-1.5 sm:px-8">
-      {PHOTOS.map((photo, i) => (
-        <PolaroidCard key={photo.id} photo={photo} index={i} />
-      ))}
+    <div
+      className="flex w-full flex-wrap items-start justify-center gap-x-1.5 gap-y-8 px-5 sm:gap-x-2 sm:gap-y-10 sm:px-8"
+      aria-label="创作能力"
+    >
+      {CAPABILITIES.map((capability, index) =>
+        prefersReducedMotion ? (
+          <StaticCapabilityCard
+            key={capability.number}
+            capability={capability}
+          />
+        ) : (
+          <MotionCapabilityCard
+            key={capability.number}
+            capability={capability}
+            index={index}
+          />
+        )
+      )}
     </div>
   );
 }

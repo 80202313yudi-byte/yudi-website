@@ -26,17 +26,33 @@ export default function AboutPage(): ReactNode {
         <FadeIn delay={0.5}>
           <div className="rounded-4xl border border-foreground/5 bg-foreground/1.5 p-8 sm:p-12 dark:bg-foreground/3">
             <h1 className="font-serif text-[1.75rem] font-medium tracking-tight text-foreground sm:text-[2rem]">
-              我是 <span className="border-b border-foreground/30 pb-0.5">于迪 / FISHDI</span>。
+              我是{" "}
+              <span className="border-b border-brand-line pb-0.5 text-brand-strong">
+                于迪 / FISHDI
+              </span>
+              。
             </h1>
             <div className="mt-8 space-y-6 text-[17px] leading-[1.7] tracking-tight text-foreground/75 sm:text-[18px]">
               <p>
-                我是一名 <strong className="font-semibold text-foreground">视觉设计师与 AI 内容创作者</strong>，长期关注品牌视觉、画册、海报、产品内容和数字页面。现在，我把 <strong className="font-semibold text-foreground">构图、信息层级与叙事节奏</strong> 的经验带进 AI 视觉创作。
+                我是一名{" "}
+                <strong className="font-semibold text-brand-strong">
+                  视觉设计师与 AI 内容创作者
+                </strong>
+                ，长期关注品牌视觉、画册、海报、产品内容和数字页面。现在，我把{" "}
+                <strong className="font-semibold text-foreground">
+                  构图、信息层级与叙事节奏
+                </strong>{" "}
+                的经验带进 AI 视觉创作。
               </p>
               <p>
                 我喜欢把模糊的想法整理成可被看见的作品：先确认内容要表达什么，再用版式、色彩、图像和动效建立清晰的观看路径。对我来说，AI 不是替代审美判断的捷径，而是扩展创意探索的工具。
               </p>
               <p>
-                接下来，我会围绕 <strong className="font-semibold text-foreground">AI 视觉、品牌设计、动漫、游戏、电影与未来科技</strong> 持续创作，也开放品牌视觉、数字内容和个人实验相关合作。
+                接下来，我会围绕{" "}
+                <strong className="font-semibold text-brand-strong">
+                  AI 视觉、品牌设计、动漫、游戏、电影与未来科技
+                </strong>{" "}
+                持续创作，也开放品牌视觉、数字内容和个人实验相关合作。
               </p>
             </div>
           </div>

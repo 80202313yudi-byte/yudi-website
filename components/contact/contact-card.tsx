@@ -30,10 +30,11 @@ export function ContactCard(): ReactNode {
             <div className="relative grid gap-8 p-6 sm:gap-10 sm:p-7 md:grid-cols-[1.2fr_1fr] md:items-stretch md:gap-6 md:p-6">
               <div className="flex flex-col gap-5">
                 <h2 className="font-serif text-[2.25rem] font-medium leading-[1.05] tracking-tight text-foreground sm:text-[2.75rem] lg:text-[3.25rem]">
-                  一起把想法做出来
+                  一起把想法<span className="whitespace-nowrap">做出来</span>
                 </h2>
                 <p className="max-w-[29ch] text-[18px] leading-[1.4] tracking-tight text-foreground/65 sm:text-[22px] mb-6">
-                  欢迎聊聊品牌视觉、AI 内容、产品页面或任何值得被看见的创意。
+                  欢迎聊聊品牌视觉、<span className="text-brand-strong">AI 内容</span>
+                  、产品页面或任何<span className="whitespace-nowrap">值得被看见的创意</span>。
                 </p>
                 <ContactCardCtas />
               </div>
@@ -92,7 +93,7 @@ function SocialIcon({
     <Link
       href={href}
       aria-label={label}
-      className="border-foreground/8 hover:border-foreground/15 focus-ring inline-flex h-11 w-11 items-center justify-center rounded-xl border bg-background text-foreground/70 transition-colors hover:text-foreground"
+      className="focus-ring inline-flex h-11 w-11 items-center justify-center rounded-xl border border-foreground/8 bg-background text-foreground/70 transition-colors hover:border-brand-line hover:bg-brand-soft hover:text-brand-strong"
       {...props}
     >
       {LucideIcon ? (

@@ -3,6 +3,8 @@
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
 
+import { useReducedMotion } from "@/lib/motion";
+
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function FadeIn({
@@ -16,6 +18,12 @@ export function FadeIn({
   duration?: number;
   className?: string;
 }): ReactNode {
+  const prefersReducedMotion = useReducedMotion();
+
+  if (prefersReducedMotion) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -39,6 +47,12 @@ export function ScaleUnblur({
   duration?: number;
   className?: string;
 }): ReactNode {
+  const prefersReducedMotion = useReducedMotion();
+
+  if (prefersReducedMotion) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.7, filter: "blur(20px)" }}

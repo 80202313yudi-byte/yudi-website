@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const siteConfig = {
   name: "FISHDI",
   description:
-    "于迪 / FISHDI 的个人作品集，展示品牌视觉、AI 视觉、画册、UI 和数字内容创作。",
+    "于迪 / FISHDI 的个人作品集，聚焦 AI 视觉设计、品牌视觉、内容包装、封面与页面设计，记录从概念到可发布视觉作品的项目实践。",
   url: "https://xn--6kq660n.com",
   ogImage: "/og-image.svg",
   creator: "@FISHDI",
@@ -85,12 +85,14 @@ export const baseMetadata: Metadata = {
 
 export function createMetadata({
   title,
+  titleAbsolute = false,
   description,
   path = "/",
   image,
   noIndex = false,
 }: {
   title?: string;
+  titleAbsolute?: boolean;
   description?: string;
   path?: string;
   image?: string;
@@ -98,15 +100,19 @@ export function createMetadata({
 }): Metadata {
   const url = `${siteConfig.url}${path}`;
   const ogImage = image ?? siteConfig.ogImage;
+  const resolvedTitle = title ?? siteConfig.name;
 
   return {
-    title,
+    title: title && titleAbsolute ? { absolute: title } : title,
     description,
     alternates: {
       canonical: path,
     },
     openGraph: {
-      title: title ?? siteConfig.name,
+      type: "website",
+      locale: "zh_CN",
+      siteName: siteConfig.name,
+      title: resolvedTitle,
       description: description ?? siteConfig.description,
       url,
       images: [
@@ -114,14 +120,16 @@ export function createMetadata({
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: title ?? siteConfig.name,
+          alt: resolvedTitle,
         },
       ],
     },
     twitter: {
-      title: title ?? siteConfig.name,
+      card: "summary_large_image",
+      title: resolvedTitle,
       description: description ?? siteConfig.description,
       images: [ogImage],
+      creator: siteConfig.creator,
     },
     ...(noIndex && {
       robots: {

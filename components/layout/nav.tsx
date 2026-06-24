@@ -14,6 +14,8 @@ import {
   type ReactNode,
 } from "react";
 
+import { useReducedMotion } from "@/lib/motion";
+
 type NavItem = {
   label: string;
   href: string;
@@ -89,7 +91,7 @@ function NavThemeToggle(): ReactNode {
           : "切换主题"
       }
       aria-pressed={mounted ? isDark : undefined}
-      className="focus-ring relative inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-background ring-1 ring-foreground/8 transition-colors"
+      className="focus-ring relative inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-background ring-1 ring-foreground/8 transition-colors hover:text-brand-strong hover:ring-brand-line"
     >
       <span aria-hidden="true" className="relative h-4 w-4">
         <Sun
@@ -113,6 +115,7 @@ function NavThemeToggle(): ReactNode {
 
 export function Nav(): ReactNode {
   const pathname = usePathname();
+  const prefersReducedMotion = useReducedMotion();
   const listRef = useRef<HTMLUListElement>(null);
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
   const [pillRect, setPillRect] = useState<{
@@ -166,12 +169,14 @@ export function Nav(): ReactNode {
               initial={false}
               animate={{ x: pillRect.x, width: pillRect.width }}
               transition={
-                hasMeasured
-                  ? { type: "spring", stiffness: 380, damping: 32 }
-                  : { duration: 0 }
+                prefersReducedMotion
+                  ? { duration: 0 }
+                  : hasMeasured
+                    ? { type: "spring", stiffness: 380, damping: 32 }
+                    : { duration: 0 }
               }
               style={{ left: 0, top: 0, bottom: 0 }}
-              className="absolute rounded-full bg-foreground/5 ring-1 ring-foreground/8"
+              className="absolute rounded-full bg-brand-soft ring-1 ring-brand-line"
             />
           )}
           {NAV_ITEMS.map((item, index) => {
@@ -192,8 +197,8 @@ export function Nav(): ReactNode {
                   <span
                     className={
                       isActive
-                        ? "relative z-10 text-foreground"
-                        : "relative z-10 text-foreground/60 hover:text-foreground"
+                        ? "relative z-10 text-brand-strong"
+                        : "relative z-10 text-foreground/60 hover:text-brand-strong"
                     }
                   >
                     {item.label}
