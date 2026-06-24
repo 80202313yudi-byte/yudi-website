@@ -34,11 +34,11 @@ redesign.
   `app/globals.css`. For dynamic project titles or descriptions, use
   `components/ui/no-orphan-text.tsx` to keep the final phrase together and avoid
   single-character orphan lines.
-- `font-serif` headings use a local fallback strategy in `app/globals.css`:
-  Fraunces remains first for Latin text, followed by stable Chinese serif
-  fallbacks such as `Songti SC`, `Noto Serif CJK SC`, and
-  `Source Han Serif SC`. Do not add remote CJK font dependencies unless the user
-  explicitly asks.
+- Chinese page-level titles use the local `.font-cjk-title` utility from
+  `app/globals.css`, backed by a stable system sans-serif CJK stack. This avoids
+  mixed Fraunces/CJK fallback runs in mobile WebViews. Keep `font-serif` for
+  Latin editorial text rather than applying it to Chinese title strings. Do not
+  add remote CJK font dependencies unless the user explicitly asks.
 - Current project images are placeholders and should be replaced later
 - Real project images should preserve original color, not be forced through a
   green or grayscale filter
@@ -230,6 +230,10 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-06-24: Replaced Fraunces-backed Chinese page title styling with a stable
+  local CJK sans-serif title utility across homepage projects, project archive,
+  project detail, About, and contact headings to prevent mixed glyph weight and
+  font fallback in mobile WebViews.
 - 2026-06-24: Replaced the About page's empty dotted polaroids with six
   lightweight creative-capability cards for composition, hierarchy,
   storytelling, identity, AI visual work, and delivery, including restrained

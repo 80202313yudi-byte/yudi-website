@@ -15,8 +15,12 @@
   --brand-foreground: #0a0a0a;
   --ring: var(--brand);
   --frame: #ffffff;
-  --font-cjk-serif: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC",
+  --font-cjk-serif:
+    "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC",
     "Source Han Serif CN", "Hiragino Mincho ProN", STSong, SimSun, serif;
+  --font-cjk-title:
+    "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC",
+    "Microsoft YaHei", system-ui, sans-serif;
 }
 
 .dark {
@@ -48,8 +52,8 @@
   --color-brand-foreground: var(--brand-foreground);
   --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-serif: var(--font-fraunces), var(--font-cjk-serif), ui-serif, Georgia,
-    serif;
+  --font-serif:
+    var(--font-fraunces), var(--font-cjk-serif), ui-serif, Georgia, serif;
 }
 
 html {
@@ -73,14 +77,23 @@ html.dark {
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  font-family:
+    var(--font-geist-sans),
+    system-ui,
+    -apple-system,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .font-serif {
-  font-family: var(--font-fraunces), var(--font-cjk-serif), ui-serif, Georgia,
-    serif;
+  font-family:
+    var(--font-fraunces), var(--font-cjk-serif), ui-serif, Georgia, serif;
+}
+
+.font-cjk-title {
+  font-family: var(--font-cjk-title);
+  font-synthesis: none;
 }
 
 :where(h1, h2, h3, h4, p, li, dt, dd, figcaption) {
