@@ -27,7 +27,7 @@ export function ContactCardCtas(): ReactNode {
 
   if (prefersReducedMotion) {
     return (
-      <div className="mt-2 flex flex-row flex-nowrap items-center justify-center gap-3">
+      <div className="mt-2 flex flex-row flex-nowrap items-center justify-center gap-3 sm:justify-start">
         <ContactButton />
         <div>{projectLink}</div>
       </div>
@@ -39,7 +39,7 @@ export function ContactCardCtas(): ReactNode {
       <motion.div
         layout
         transition={{ layout: { duration: 0.55, ease: EASE } }}
-        className="mt-2 flex flex-row flex-nowrap items-center justify-center gap-3"
+        className="mt-2 flex flex-row flex-nowrap items-center justify-center gap-3 sm:justify-start"
       >
         <ContactButton />
 

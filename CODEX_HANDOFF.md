@@ -266,6 +266,9 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-06-25: Restored desktop contact-card CTA alignment to the previous
+  left-aligned layout while keeping the mobile CTA buttons in one centered,
+  no-wrap horizontal row.
 - 2026-06-25: Changed the contact-card CTA layout back to a single horizontal
   row on mobile as well as desktop, keeping `联系我` and `查看项目` centered,
   no-wrap, and width-to-content now that the mobile email button no longer
