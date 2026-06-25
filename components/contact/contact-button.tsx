@@ -43,28 +43,8 @@ export function ContactButton(): ReactNode {
   const prefersReducedMotion = useReducedMotion();
   const finePointer = useFinePointer();
   const expanded = finePointer && open;
-  const useRevealMotion = finePointer && !prefersReducedMotion;
-  const contentInitial = !useRevealMotion
-    ? false
-    : { opacity: 0, filter: "blur(8px)" };
-  const contentAnimate = !useRevealMotion
-    ? { opacity: 1 }
-    : { opacity: 1, filter: "blur(0px)" };
-  const contentExit = !useRevealMotion
-    ? { opacity: 0 }
-    : { opacity: 0, filter: "blur(8px)" };
-  const contentTransition = !useRevealMotion
-    ? { duration: 0 }
-    : { duration: 0.35, ease: EASE };
-  const iconInitial = !useRevealMotion
-    ? false
-    : { scale: 0.5, opacity: 0 };
-  const iconExit = !useRevealMotion
-    ? { opacity: 0 }
-    : { scale: 0.5, opacity: 0 };
-  const iconTransition = !useRevealMotion
-    ? { duration: 0 }
-    : { duration: 0.2, ease: EASE };
+  const desktopReveal = finePointer && !prefersReducedMotion;
+  const closedLabel = !finePointer && copied ? "邮箱已复制" : "联系我";
 
   useEffect(() => {
     return () => {
@@ -107,7 +87,7 @@ export function ContactButton(): ReactNode {
   return (
     <motion.button
       type="button"
-      layout={useRevealMotion}
+      layout={desktopReveal}
       onClick={handleCopy}
       onHoverStart={() => {
         if (finePointer) {
@@ -133,24 +113,24 @@ export function ContactButton(): ReactNode {
         copied ? "邮箱已复制" : expanded ? `复制 ${EMAIL}` : "复制邮箱"
       }
       transition={{
-        layout: { duration: useRevealMotion ? 0.55 : 0, ease: EASE },
+        layout: { duration: desktopReveal ? 0.55 : 0, ease: EASE },
       }}
       style={{ borderRadius: 12 }}
       className="focus-ring relative inline-flex h-11 min-w-[8.5rem] touch-manipulation cursor-pointer items-center justify-center bg-foreground px-5 text-sm font-medium text-background sm:min-w-0"
     >
       <motion.span
-        layout={useRevealMotion ? "position" : false}
+        layout={desktopReveal ? "position" : false}
         className="relative inline-flex items-center"
       >
         <AnimatePresence initial={false} mode="popLayout">
           {expanded ? (
             <motion.span
               key="email"
-              layout={useRevealMotion ? "position" : false}
-              initial={contentInitial}
-              animate={contentAnimate}
-              exit={contentExit}
-              transition={contentTransition}
+              layout="position"
+              initial={{ opacity: 0, filter: "blur(8px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, filter: "blur(8px)" }}
+              transition={{ duration: 0.35, ease: EASE }}
               className="inline-flex items-center gap-2 whitespace-nowrap"
             >
               <span className="relative inline-flex h-4 w-4 shrink-0 items-center justify-center">
@@ -158,10 +138,10 @@ export function ContactButton(): ReactNode {
                   {copied ? (
                     <motion.span
                       key="check"
-                      initial={iconInitial}
+                      initial={{ scale: 0.5, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      exit={iconExit}
-                      transition={iconTransition}
+                      exit={{ scale: 0.5, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: EASE }}
                       className="inline-flex"
                     >
                       <Check className="h-4 w-4" aria-hidden="true" />
@@ -169,10 +149,10 @@ export function ContactButton(): ReactNode {
                   ) : (
                     <motion.span
                       key="copy"
-                      initial={iconInitial}
+                      initial={{ scale: 0.5, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      exit={iconExit}
-                      transition={iconTransition}
+                      exit={{ scale: 0.5, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: EASE }}
                       className="inline-flex"
                     >
                       <Copy className="h-4 w-4" aria-hidden="true" />
@@ -184,20 +164,32 @@ export function ContactButton(): ReactNode {
             </motion.span>
           ) : (
             <motion.span
-              key={copied ? "copied" : "contact"}
-              layout={useRevealMotion ? "position" : false}
-              initial={contentInitial}
-              animate={contentAnimate}
-              exit={contentExit}
-              transition={contentTransition}
+              key={finePointer ? "contact" : closedLabel}
+              layout={desktopReveal ? "position" : false}
+              initial={
+                desktopReveal ? { opacity: 0, filter: "blur(8px)" } : false
+              }
+              animate={
+                desktopReveal
+                  ? { opacity: 1, filter: "blur(0px)" }
+                  : { opacity: 1 }
+              }
+              exit={
+                desktopReveal
+                  ? { opacity: 0, filter: "blur(8px)" }
+                  : { opacity: 0 }
+              }
+              transition={
+                desktopReveal ? { duration: 0.35, ease: EASE } : { duration: 0 }
+              }
               className="inline-flex items-center gap-2 whitespace-nowrap"
             >
-              {copied ? (
+              {!finePointer && copied ? (
                 <Check className="h-4 w-4 shrink-0" aria-hidden="true" />
               ) : (
                 <Mail className="h-4 w-4 shrink-0" aria-hidden="true" />
               )}
-              <span>{copied ? "邮箱已复制" : "联系我"}</span>
+              <span>{closedLabel}</span>
             </motion.span>
           )}
         </AnimatePresence>

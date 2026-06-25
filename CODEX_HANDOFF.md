@@ -266,6 +266,9 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-06-25: Restored the desktop contact email reveal timing and layout
+  structure to match the original `rbp-portfolio-main (1).zip` button more
+  closely, while keeping the mobile/touch fallback as a fixed-width copy state.
 - 2026-06-25: Restored desktop contact-card CTA alignment to the previous
   left-aligned layout while keeping the mobile CTA buttons in one centered,
   no-wrap horizontal row.
