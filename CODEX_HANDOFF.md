@@ -266,6 +266,10 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-06-25: Split the contact email button into a desktop-only implementation
+  that matches the original template's Motion layout reveal and a separate
+  mobile-only copy button, removing the old fine-pointer runtime branch that
+  could make the reveal timing inconsistent.
 - 2026-06-25: Restored the desktop contact email reveal timing and layout
   structure to match the original `rbp-portfolio-main (1).zip` button more
   closely, while keeping the mobile/touch fallback as a fixed-width copy state.
