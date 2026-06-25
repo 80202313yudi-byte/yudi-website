@@ -29,8 +29,9 @@ export function ContactCard(): ReactNode {
 
             <div className="relative grid gap-8 p-6 sm:gap-10 sm:p-7 md:grid-cols-[1.2fr_1fr] md:items-stretch md:gap-6 md:p-6">
               <div className="flex flex-col gap-5">
-                <h2 className="font-cjk-title text-foreground text-[2.25rem] leading-[1.08] font-medium tracking-tight sm:text-[2.75rem] lg:text-[3.25rem]">
-                  一起把想法<span className="whitespace-nowrap">做出来</span>
+                <h2 className="font-cjk-title text-foreground text-[2.25rem] leading-[1.12] font-medium tracking-tight sm:text-[2.75rem] sm:leading-[1.08] lg:text-[3.25rem]">
+                  <span className="block whitespace-nowrap">一起</span>
+                  <span className="block whitespace-nowrap">把想法做出来。</span>
                 </h2>
                 <p className="text-foreground/65 mb-6 max-w-[29ch] text-[18px] leading-[1.4] tracking-tight sm:text-[22px]">
                   欢迎聊聊品牌视觉、

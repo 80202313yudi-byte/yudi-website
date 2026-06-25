@@ -5,14 +5,14 @@ import {
   Layers,
   UserRound,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { ComponentType, ReactNode } from "react";
 
 import { ContactCard } from "@/components/contact/contact-card";
-import GradualBlur from "@/components/ui/gradual-blur";
+import { ProjectImageLightbox } from "@/components/projects/project-image-lightbox";
+import { ProjectReturnLink } from "@/components/projects/project-return-link";
 import { FadeIn } from "@/components/ui/motion-primitives";
 import { NoOrphanText } from "@/components/ui/no-orphan-text";
 import { createMetadata } from "@/lib/metadata";
@@ -21,7 +21,6 @@ import {
   getProjectBySlug,
   projects,
   type Project,
-  type ProjectImage,
 } from "@/lib/projects";
 
 type ProjectDetailPageProps = {
@@ -70,32 +69,33 @@ export default async function ProjectDetailPage({
   }
 
   const { previous, next } = getAdjacentProjects(project.slug);
+  const galleryImages = [project.heroImage, ...project.detailImages];
 
   return (
     <main id="main-content" className="flex flex-1 flex-col">
-      <ProjectHeader project={project} />
-      <ProjectDetails project={project} />
+      <ProjectHeader project={project} galleryImages={galleryImages} />
+      <ProjectDetails project={project} galleryImages={galleryImages} />
       <ProjectPager previous={previous} next={next} />
+      <section className="mx-auto flex w-full max-w-275 justify-center px-6 pb-12 sm:px-10 sm:pb-16">
+        <ProjectReturnLink slug={project.slug} placement="bottom" />
+      </section>
       <ContactCard />
       <div className="h-12 sm:h-16" />
     </main>
   );
 }
 
-function ProjectHeader({ project }: { project: Project }): ReactNode {
+function ProjectHeader({
+  project,
+  galleryImages,
+}: {
+  project: Project;
+  galleryImages: Project["detailImages"];
+}): ReactNode {
   return (
     <article className="mx-auto w-full max-w-275 px-6 pt-40 pb-10 sm:px-10 sm:pt-48 sm:pb-14 lg:pt-56">
       <FadeIn className="flex flex-col gap-8">
-        <Link
-          href="/projects"
-          className="focus-ring group border-foreground/8 bg-background text-foreground/70 hover:border-brand-line hover:bg-brand-soft hover:text-brand-strong inline-flex w-fit items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-colors"
-        >
-          <ArrowLeft
-            className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-0.5"
-            aria-hidden="true"
-          />
-          返回全部作品
-        </Link>
+        <ProjectReturnLink slug={project.slug} placement="top" />
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.55fr)] lg:items-end">
           <div className="flex flex-col gap-5">
@@ -129,13 +129,26 @@ function ProjectHeader({ project }: { project: Project }): ReactNode {
           </dl>
         </div>
 
-        <ProjectImageFrame image={project.heroImage} priority large edgeBlur />
+        <ProjectImageLightbox
+          image={project.heroImage}
+          galleryImages={galleryImages}
+          galleryIndex={0}
+          priority
+          large
+          edgeBlur
+        />
       </FadeIn>
     </article>
   );
 }
 
-function ProjectDetails({ project }: { project: Project }): ReactNode {
+function ProjectDetails({
+  project,
+  galleryImages,
+}: {
+  project: Project;
+  galleryImages: Project["detailImages"];
+}): ReactNode {
   return (
     <section className="mx-auto w-full max-w-275 px-6 pb-12 sm:px-10 sm:pb-16">
       <div className="grid gap-8 lg:grid-cols-[0.45fr_1fr] lg:gap-10">
@@ -175,66 +188,17 @@ function ProjectDetails({ project }: { project: Project }): ReactNode {
               delay={Math.min(index * 0.06, 0.24)}
               className={index === 0 ? "md:col-span-2" : ""}
             >
-              <ProjectImageFrame image={image} large={index === 0} />
+              <ProjectImageLightbox
+                image={image}
+                galleryImages={galleryImages}
+                galleryIndex={index + 1}
+                large={index === 0}
+              />
             </FadeIn>
           ))}
         </div>
       </div>
     </section>
-  );
-}
-
-function ProjectImageFrame({
-  image,
-  priority = false,
-  large = false,
-  edgeBlur = false,
-}: {
-  image: ProjectImage;
-  priority?: boolean;
-  large?: boolean;
-  edgeBlur?: boolean;
-}): ReactNode {
-  return (
-    <figure className="border-foreground/8 bg-background overflow-hidden rounded-3xl border p-2 shadow-sm">
-      <div
-        className={`ring-foreground/5 bg-foreground/5 relative overflow-hidden rounded-[1.35rem] ring-1 ${
-          large ? "aspect-[16/10]" : "aspect-[4/3]"
-        }`}
-      >
-        <Image
-          src={image.src}
-          alt={image.alt}
-          fill
-          unoptimized
-          priority={priority}
-          sizes={
-            large
-              ? "(min-width: 1280px) 1100px, 100vw"
-              : "(min-width: 1024px) 520px, (min-width: 768px) 48vw, 100vw"
-          }
-          className="object-cover"
-        />
-        {edgeBlur ? (
-          <GradualBlur
-            target="parent"
-            position="bottom"
-            height="4.25rem"
-            strength={0.85}
-            divCount={4}
-            curve="bezier"
-            exponential={false}
-            opacity={0.48}
-            zIndex={2}
-          />
-        ) : null}
-      </div>
-      {image.caption ? (
-        <figcaption className="text-foreground/50 px-2 pt-3 pb-1 text-[13px] leading-relaxed tracking-tight">
-          <NoOrphanText text={image.caption} tailLength={5} />
-        </figcaption>
-      ) : null}
-    </figure>
   );
 }
 
@@ -300,7 +264,8 @@ function ProjectPagerLink({
 
   return (
     <Link
-      href={`/projects/${project.slug}`}
+      href={`/projects/${project.slug}?from=projects`}
+      scroll={true}
       className="project-card focus-ring group border-foreground/8 bg-background flex min-h-34 flex-col justify-between rounded-3xl border p-5 no-underline shadow-sm sm:p-6"
     >
       <span className="text-foreground/55 group-hover:text-brand-strong inline-flex items-center gap-2 text-sm font-medium tracking-tight transition-colors">

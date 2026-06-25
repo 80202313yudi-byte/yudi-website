@@ -1,6 +1,6 @@
 # FISHDI Portfolio - Codex Handoff
 
-Last updated: 2026-06-24
+Last updated: 2026-06-25
 
 Read this before modifying the project. Keep it current when architecture,
 content, deployment, routes, assets, dependencies, or known issues change.
@@ -104,6 +104,33 @@ Project detail pages are intentionally simple:
 6. return to all projects
 7. contact card
 
+Project detail images use `components/projects/project-image-lightbox.tsx`.
+The detail page remains a server component for metadata/static params, while
+the image frame is a client component. It renders `project.heroImage` and
+`project.detailImages` as clickable frames, opens a portal-based full-screen
+lightbox, and cycles only through the current project's gallery in the order
+`[project.heroImage, ...project.detailImages]`. The lightbox supports close,
+previous/next buttons, Escape, keyboard arrow navigation, mouse-wheel zoom
+from the cursor position up to 4x, drag-to-pan when zoomed, a zoom percentage,
+and a reset control. Keep future zoom/pan changes inside the client component;
+do not convert the route page itself to a client component.
+
+Project detail links preserve their browsing context with a `from` query:
+homepage selected-project cards link to `/projects/[slug]?from=home` and the
+project archive links to `/projects/[slug]?from=projects`. Because the site is
+statically exported for GitHub Pages, the detail return buttons are implemented
+as a client component in `components/projects/project-return-link.tsx`; it reads
+`window.location.search` and uses query targets
+(`/?returnTo=featured-project-[slug]` or
+`/projects?returnTo=all-project-[slug]`) so users land near the card they
+opened without triggering native hash-anchor scrolling. Entering a project
+detail page must not include a hash and must scroll to the top; only leaving a
+detail page uses `returnTo` query params to restore the original card context.
+The homepage "查看全部" button links to `/projects?scroll=top` with
+`scroll={false}`; `SmoothScroll` performs one top reset and then removes the
+temporary query param so entering the archive starts at the top without hash
+or double-scroll jitter.
+
 Do not add `/works` routes to this template version unless the user explicitly
 asks.
 
@@ -121,9 +148,11 @@ components/hero/portrait-morph.tsx
 components/contact/contact-button.tsx
 components/contact/contact-card.tsx
 components/layout/nav.tsx
+components/projects/project-image-lightbox.tsx
 components/ui/gradual-blur.tsx
 components/ui/no-orphan-text.tsx
 components/ui/rotating-text.tsx
+components/ui/typewriter-rotating-text.tsx
 lib/projects.ts
 lib/metadata.ts
 public/CNAME
@@ -173,14 +202,18 @@ The top of the About page uses `components/about/polaroid-strip.tsx` as a
 six-card creative-capability strip rather than empty placeholder polaroids. The
 cards cover composition, hierarchy, storytelling, identity, AI visual work,
 and delivery with restrained line-art details and the local brand accent.
-Desktop hover only adds a small lift; reduced-motion users receive static,
-rotated cards.
+Desktop fine-pointer users get a light inspiration-card interaction: hover
+lifts the focused card, applies cursor-based tilt, wakes the group with tiny
+offsets, reveals one short explanation, and runs small line-art micro-motion.
+Mobile keeps only the first four cards in a 2x2 grid and uses tap-to-toggle for
+the same explanation. Reduced-motion users keep static transforms with simple
+focus/active highlighting and no tilt or icon animation.
 
-The homepage Hero uses `components/ui/rotating-text.tsx` only for the small
-positioning keyword capsule. It rotates the lines `AI 视觉系统`, `品牌识别设计`,
-`内容封面包装`, and `作品页面设计` at a restrained pace. Do not reuse this
-component in navigation, project cards, footers, or multiple section headings
-unless the user explicitly asks.
+The homepage Hero uses `components/ui/typewriter-rotating-text.tsx` only for
+the small positioning keyword after `聚焦`. It types, holds, deletes, and cycles
+through `内容封面包装`, `AI 视觉系统`, `品牌识别设计`, and `作品页面设计` without
+the old RotatingText pill background, border, or shadow. Reduced-motion users
+see the first keyword statically.
 
 `components/ui/gradual-blur.tsx` is a local React Bits-style GradualBlur
 adaptation. It is currently used only on the homepage Hero bottom edge and the
@@ -191,8 +224,11 @@ applied to every project card or as a page-wide overlay.
 Hero and contact-card email actions share `components/contact/contact-button.tsx`.
 It uses the original `rbp-portfolio-main (1).zip` morphing email-copy effect:
 one `motion.button` with `layout` and `AnimatePresence`, hover/focus reveal from
-`联系我` to the email state, and click-to-copy feedback. Do not replace this
-with custom CSS width animations unless the user explicitly asks.
+`联系我` to the email state, and click-to-copy feedback on desktop-sized
+fine-pointer viewports. On small or touch-like viewports, the button does not
+expand to the long email address; tap/click copies the email and shows the
+fixed-width `邮箱已复制` state to avoid mobile flicker and layout jitter. Do not
+replace this with custom CSS width animations unless the user explicitly asks.
 
 Reduced motion is centralized in `lib/motion.tsx` through
 `ReducedMotionProvider`. Components that create sustained or complex animation
@@ -230,10 +266,66 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-06-25: Changed the contact-card CTA layout back to a single horizontal
+  row on mobile as well as desktop, keeping `联系我` and `查看项目` centered,
+  no-wrap, and width-to-content now that the mobile email button no longer
+  expands.
+- 2026-06-25: Updated the contact-card headline rhythm to a fixed two-line
+  phrase, `一起` / `把想法做出来。`, so mobile no longer relies on natural line
+  breaking for the title.
+- 2026-06-25: Centered the contact-card CTA stack on mobile so the middle
+  `查看项目` button keeps its natural content width instead of inheriting the
+  desktop left-aligned wrapping layout; desktop still returns to the horizontal
+  CTA row from the `sm` breakpoint up.
+- 2026-06-25: Fixed the contact card headline on mobile by splitting
+  `一起把想法` and `做出来` into responsive no-wrap title lines, preventing the
+  Chinese word `想法` from being split across lines while preserving the wider
+  desktop layout.
+- 2026-06-25: Split the contact email-copy button behavior by interaction
+  context: desktop/fine-pointer keeps the original hover/focus email reveal,
+  while mobile/small viewports use a fixed-width click-to-copy state that
+  changes from `联系我` to `邮箱已复制` without expanding the email or shifting
+  neighboring CTA buttons.
+- 2026-06-25: Upgraded the About-page creative-capability cards into a
+  restrained inspiration-card interaction with desktop hover lift/tilt, group
+  wake offsets, muted sibling cards, short detail reveals, line-art micro-motion,
+  mobile tap-to-toggle for the first four cards, keyboard activation, and
+  reduced-motion static fallbacks.
+- 2026-06-25: Extended the project detail Lightbox with mouse-wheel zoom,
+  cursor-centered scaling, drag-to-pan for zoomed images, a zoom percentage,
+  and a reset control while preserving the server-rendered detail page and
+  existing gallery carousel behavior.
+- 2026-06-25: Added a portal-based project image lightbox for
+  `/projects/[slug]`. The hero image and all detail images are clickable,
+  cycle within the current project gallery, and support close, previous/next,
+  Escape, and keyboard arrow navigation while keeping the detail page server
+  rendered for metadata and static export.
+- 2026-06-25: Replaced the homepage Hero RotatingText pill with a lightweight
+  text-only typewriter keyword loop after `聚焦`, using the keyword order
+  `内容封面包装`, `AI 视觉系统`, `品牌识别设计`, `作品页面设计`, a subtle green
+  cursor, and a static reduced-motion fallback.
 - 2026-06-24: Replaced Fraunces-backed Chinese page title styling with a stable
   local CJK sans-serif title utility across homepage projects, project archive,
   project detail, About, and contact headings to prevent mixed glyph weight and
   font fallback in mobile WebViews.
+- 2026-06-24: Updated project-card detail links and detail-page return buttons
+  to preserve homepage-selected versus `/projects` archive context through
+  `from` query params and card-specific return targets. Added a second return
+  button below the previous/next pager and a Lenis-safe hash scroll fallback so
+  returns land near the opened card instead of the archive top.
+- 2026-06-24: Made project-detail entry links explicitly use normal top-scroll
+  navigation and added a Lenis-safe top reset for `/projects/[slug]` routes with
+  no hash, keeping the rule clear: entering details starts at the top, returning
+  from details uses card-specific return targets.
+- 2026-06-24: Replaced detail-page return hash anchors with `returnTo` query
+  params and a single Lenis-aware layout scroll, preventing native hash scroll
+  and custom offset correction from double-running and causing visible jitter.
+  The `returnTo` param is removed after the one-time positioning so returned
+  URLs stay clean.
+- 2026-06-24: Updated the homepage "查看全部" archive entry to use a temporary
+  `/projects?scroll=top` query plus a single Lenis-aware top reset, then clear
+  the query so the projects archive opens at the true page top without affecting
+  project-detail return positioning.
 - 2026-06-24: Replaced the About page's empty dotted polaroids with six
   lightweight creative-capability cards for composition, hierarchy,
   storytelling, identity, AI visual work, and delivery, including restrained

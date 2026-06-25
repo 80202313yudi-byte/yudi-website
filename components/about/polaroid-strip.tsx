@@ -2,7 +2,13 @@
 
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
-import { useSyncExternalStore, type ReactNode } from "react";
+import {
+  useState,
+  useSyncExternalStore,
+  type CSSProperties,
+  type PointerEvent,
+  type ReactNode,
+} from "react";
 
 import { useReducedMotion } from "@/lib/motion";
 
@@ -19,6 +25,7 @@ type Capability = {
   title: string;
   english: string;
   description: string;
+  detail: string;
   rotate: number;
   kind: CapabilityKind;
 };
@@ -29,6 +36,7 @@ const CAPABILITIES: Capability[] = [
     title: "构图",
     english: "Composition",
     description: "平衡画面重心",
+    detail: "组织画面比例、视觉重心和留白。",
     rotate: -6,
     kind: "composition",
   },
@@ -37,6 +45,7 @@ const CAPABILITIES: Capability[] = [
     title: "层级",
     english: "Hierarchy",
     description: "建立阅读顺序",
+    detail: "让标题、图像和信息按顺序被看见。",
     rotate: 4,
     kind: "hierarchy",
   },
@@ -45,6 +54,7 @@ const CAPABILITIES: Capability[] = [
     title: "叙事",
     english: "Storytelling",
     description: "组织观看节奏",
+    detail: "把一个想法整理成可阅读的视觉线索。",
     rotate: -3,
     kind: "storytelling",
   },
@@ -53,6 +63,7 @@ const CAPABILITIES: Capability[] = [
     title: "品牌",
     english: "Identity",
     description: "统一识别线索",
+    detail: "统一色彩、字体、图形和内容气质。",
     rotate: 5,
     kind: "identity",
   },
@@ -61,6 +72,7 @@ const CAPABILITIES: Capability[] = [
     title: "AI 视觉",
     english: "AI Visual",
     description: "扩展视觉方向",
+    detail: "生成、筛选、修正并统一系列图像。",
     rotate: -4,
     kind: "ai-visual",
   },
@@ -69,6 +81,7 @@ const CAPABILITIES: Capability[] = [
     title: "交付",
     english: "Delivery",
     description: "推进可用成果",
+    detail: "输出封面、海报、页面、物料和视觉系统。",
     rotate: 4,
     kind: "delivery",
   },
@@ -76,7 +89,20 @@ const CAPABILITIES: Capability[] = [
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const CARD_CLASS =
-  "group relative aspect-[3/4] w-[clamp(8.4rem,14vw,11rem)] shrink-0 overflow-hidden rounded-2xl border-[5px] border-neutral-300/35 bg-white p-1.5 shadow-[0_12px_30px_rgba(10,10,10,0.035)] dark:border-white/12 dark:bg-neutral-900 dark:shadow-none";
+  "capability-card-button focus-ring group relative aspect-[3/4] w-full shrink-0 cursor-pointer overflow-hidden rounded-2xl border-[5px] border-neutral-300/35 bg-white p-1.5 text-left shadow-[0_12px_30px_rgba(10,10,10,0.035)] sm:w-[clamp(8.4rem,14vw,11rem)] dark:border-white/12 dark:bg-neutral-900 dark:shadow-none";
+const WAKE_OFFSETS = [
+  { x: -6, y: -2 },
+  { x: -3, y: 3 },
+  { x: 0, y: -4 },
+  { x: 3, y: 2 },
+  { x: 5, y: -3 },
+  { x: 7, y: 2 },
+];
+
+type CapabilityCardStyle = CSSProperties & {
+  "--tilt-x"?: string;
+  "--tilt-y"?: string;
+};
 
 function CapabilityArtwork({ kind }: { kind: CapabilityKind }): ReactNode {
   if (kind === "composition") {
@@ -85,7 +111,7 @@ function CapabilityArtwork({ kind }: { kind: CapabilityKind }): ReactNode {
         <span className="border-foreground/20 absolute inset-[18%] rounded-sm border" />
         <span className="border-foreground/10 absolute top-[18%] bottom-[18%] left-1/2 border-l" />
         <span className="border-foreground/10 absolute top-1/2 right-[18%] left-[18%] border-t" />
-        <span className="border-brand-line bg-brand-soft absolute top-[28%] right-[25%] h-5 w-5 rounded-full border" />
+        <span className="capability-art__composition-dot border-brand-line bg-brand-soft absolute top-[28%] right-[25%] h-5 w-5 rounded-full border" />
       </div>
     );
   }
@@ -96,10 +122,10 @@ function CapabilityArtwork({ kind }: { kind: CapabilityKind }): ReactNode {
         className="flex h-full w-full flex-col justify-center gap-2.5 px-[18%]"
         aria-hidden="true"
       >
-        <span className="bg-foreground/70 h-1.5 w-4/5 rounded-full" />
-        <span className="bg-foreground/20 h-px w-full" />
-        <span className="bg-foreground/15 h-px w-3/4" />
-        <span className="bg-brand h-px w-1/2" />
+        <span className="capability-art__hierarchy-line bg-foreground/70 h-1.5 w-4/5 rounded-full" />
+        <span className="capability-art__hierarchy-line bg-foreground/20 h-px w-full" />
+        <span className="capability-art__hierarchy-line bg-foreground/15 h-px w-3/4" />
+        <span className="capability-art__hierarchy-line bg-brand h-px w-1/2" />
       </div>
     );
   }
@@ -107,7 +133,16 @@ function CapabilityArtwork({ kind }: { kind: CapabilityKind }): ReactNode {
   if (kind === "storytelling") {
     return (
       <div className="relative h-full w-full" aria-hidden="true">
-        <span className="bg-foreground/15 absolute top-1/2 right-[18%] left-[18%] h-px -rotate-12" />
+        <svg className="absolute inset-[18%] h-[64%] w-[64%]" viewBox="0 0 100 100">
+          <path
+            className="capability-art__story-path"
+            d="M8 58 C28 48 39 66 54 50 S78 32 92 43"
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeWidth="1.8"
+          />
+        </svg>
         <span className="border-foreground/35 absolute top-[34%] left-[20%] h-2.5 w-2.5 rounded-full border bg-white dark:bg-neutral-900" />
         <span className="bg-brand absolute top-[49%] left-[46%] h-2.5 w-2.5 rounded-full" />
         <span className="border-foreground/35 absolute right-[20%] bottom-[31%] h-2.5 w-2.5 rounded-full border bg-white dark:bg-neutral-900" />
@@ -118,9 +153,9 @@ function CapabilityArtwork({ kind }: { kind: CapabilityKind }): ReactNode {
   if (kind === "identity") {
     return (
       <div className="relative h-full w-full" aria-hidden="true">
-        <span className="border-foreground/25 absolute top-[27%] left-[27%] h-[38%] w-[38%] rounded-sm border" />
-        <span className="border-brand-line bg-brand-soft absolute right-[25%] bottom-[26%] h-[34%] w-[34%] rounded-sm border" />
-        <span className="bg-brand absolute top-[32%] left-[32%] h-2 w-2" />
+        <span className="capability-art__identity-block border-foreground/25 absolute top-[27%] left-[27%] h-[38%] w-[38%] rounded-sm border" />
+        <span className="capability-art__identity-block border-brand-line bg-brand-soft absolute right-[25%] bottom-[26%] h-[34%] w-[34%] rounded-sm border" />
+        <span className="capability-art__identity-block bg-brand absolute top-[32%] left-[32%] h-2 w-2" />
       </div>
     );
   }
@@ -135,7 +170,8 @@ function CapabilityArtwork({ kind }: { kind: CapabilityKind }): ReactNode {
           {Array.from({ length: 16 }, (_, index) => (
             <span
               key={index}
-              className="bg-foreground/35 m-auto h-1 w-1 rounded-full"
+              className="capability-art__ai-dot bg-foreground/35 m-auto h-1 w-1 rounded-full"
+              style={{ animationDelay: `${index * 70}ms` }}
             />
           ))}
         </div>
@@ -155,7 +191,7 @@ function CapabilityArtwork({ kind }: { kind: CapabilityKind }): ReactNode {
       <span className="border-foreground/20 h-[48%] w-[42%] rounded-sm border" />
       <span className="border-brand-line absolute h-[34%] w-[30%] translate-x-2 translate-y-2 rounded-sm border" />
       <ArrowUpRight
-        className="text-brand-strong absolute h-5 w-5 translate-x-6 -translate-y-7"
+        className="capability-art__delivery-arrow text-brand-strong absolute h-5 w-5 translate-x-6 -translate-y-7"
         strokeWidth={1.5}
       />
     </div>
@@ -192,60 +228,130 @@ function CapabilityCardContent({
             {capability.english}
           </span>
         </div>
-        <p className="text-foreground/48 group-hover:text-foreground/68 mt-1 hidden min-h-4 text-[11px] leading-4 transition-colors duration-300 lg:block">
+        <p className="capability-card-summary text-foreground/48 mt-1 hidden min-h-4 text-[11px] leading-4 transition-colors duration-300 lg:block">
           {capability.description}
+        </p>
+        <p className="capability-card-detail text-foreground/62 mt-1.5 text-[10px] leading-[1.55] sm:text-[11px]">
+          {capability.detail}
         </p>
       </div>
     </div>
   );
 }
 
-function MotionCapabilityCard({
+function CapabilityCardShell({
   capability,
   index,
+  active,
+  muted,
+  awake,
+  reducedMotion,
+  onActivate,
+  onHoverChange,
 }: {
   capability: Capability;
   index: number;
+  active: boolean;
+  muted: boolean;
+  awake: boolean;
+  reducedMotion: boolean;
+  onActivate: () => void;
+  onHoverChange: (index: number | null) => void;
 }): ReactNode {
-  return (
-    <motion.article
-      initial={{
+  const wakeOffset = WAKE_OFFSETS[index] ?? { x: 0, y: 0 };
+  const initial = reducedMotion
+    ? { opacity: 1, y: 0, filter: "blur(0px)", rotate: capability.rotate }
+    : {
         opacity: 0,
         y: -90,
         filter: "blur(14px)",
         rotate: capability.rotate,
-      }}
-      animate={{
+      };
+  const animate = reducedMotion
+    ? {
         opacity: 1,
         y: 0,
+        x: 0,
         filter: "blur(0px)",
         rotate: capability.rotate,
-      }}
-      whileHover={{ y: -6, rotate: capability.rotate * 0.65 }}
+      }
+    : {
+        opacity: muted ? 0.74 : 1,
+        y: awake ? wakeOffset.y : 0,
+        x: awake ? wakeOffset.x : 0,
+        filter: "blur(0px)",
+        rotate: capability.rotate,
+      };
+  const buttonStyle: CapabilityCardStyle = {
+    "--tilt-x": "0deg",
+    "--tilt-y": "0deg",
+  };
+
+  function handlePointerMove(event: PointerEvent<HTMLButtonElement>): void {
+    if (reducedMotion || event.pointerType === "touch") {
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const relativeX = (event.clientX - rect.left) / rect.width - 0.5;
+    const relativeY = (event.clientY - rect.top) / rect.height - 0.5;
+    const maxTilt = 7;
+
+    event.currentTarget.style.setProperty(
+      "--tilt-x",
+      `${(-relativeY * maxTilt).toFixed(2)}deg`
+    );
+    event.currentTarget.style.setProperty(
+      "--tilt-y",
+      `${(relativeX * maxTilt).toFixed(2)}deg`
+    );
+  }
+
+  function resetTilt(event: PointerEvent<HTMLButtonElement>): void {
+    event.currentTarget.style.setProperty("--tilt-x", "0deg");
+    event.currentTarget.style.setProperty("--tilt-y", "0deg");
+  }
+
+  return (
+    <motion.div
+      className={`capability-card-shell ${index >= 4 ? "max-sm:hidden" : ""}`}
+      initial={initial}
+      animate={animate}
       transition={{
-        duration: 0.8,
+        duration: reducedMotion ? 0.01 : 0.8,
         delay: 0.04 + index * 0.07,
         ease: EASE,
       }}
-      className={CARD_CLASS}
+      data-muted={muted ? "true" : undefined}
+      style={{ zIndex: active || !muted ? 2 : 1 }}
     >
-      <CapabilityCardContent capability={capability} />
-    </motion.article>
-  );
-}
-
-function StaticCapabilityCard({
-  capability,
-}: {
-  capability: Capability;
-}): ReactNode {
-  return (
-    <article
-      style={{ transform: `rotate(${capability.rotate}deg)` }}
-      className={CARD_CLASS}
-    >
-      <CapabilityCardContent capability={capability} />
-    </article>
+      <button
+        type="button"
+        className={CARD_CLASS}
+        style={buttonStyle}
+        aria-pressed={active}
+        aria-label={`${capability.number} ${capability.title}，${capability.detail}`}
+        data-active={active ? "true" : undefined}
+        data-kind={capability.kind}
+        onClick={onActivate}
+        onPointerEnter={(event) => {
+          if (event.pointerType !== "touch") {
+            onHoverChange(index);
+          }
+        }}
+        onPointerMove={handlePointerMove}
+        onPointerLeave={(event) => {
+          if (event.pointerType !== "touch") {
+            onHoverChange(null);
+          }
+          resetTilt(event);
+        }}
+        onFocus={() => onHoverChange(index)}
+        onBlur={() => onHoverChange(null)}
+      >
+        <CapabilityCardContent capability={capability} />
+      </button>
+    </motion.div>
   );
 }
 
@@ -256,6 +362,9 @@ export function PolaroidStrip(): ReactNode {
     () => false
   );
   const prefersReducedMotion = useReducedMotion();
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [awake, setAwake] = useState(false);
 
   if (!mounted) {
     return (
@@ -265,23 +374,42 @@ export function PolaroidStrip(): ReactNode {
 
   return (
     <div
-      className="flex w-full flex-wrap items-start justify-center gap-x-1.5 gap-y-8 px-5 sm:gap-x-2 sm:gap-y-10 sm:px-8"
+      className="capability-strip grid w-full grid-cols-2 items-start justify-center gap-x-4 gap-y-7 px-6 sm:flex sm:flex-wrap sm:gap-x-2 sm:gap-y-10 sm:px-8"
       aria-label="创作能力"
+      onPointerEnter={(event) => {
+        if (!prefersReducedMotion && event.pointerType !== "touch") {
+          setAwake(true);
+        }
+      }}
+      onPointerLeave={(event) => {
+        if (event.pointerType !== "touch") {
+          setAwake(false);
+          setHoveredIndex(null);
+        }
+      }}
     >
-      {CAPABILITIES.map((capability, index) =>
-        prefersReducedMotion ? (
-          <StaticCapabilityCard
-            key={capability.number}
-            capability={capability}
-          />
-        ) : (
-          <MotionCapabilityCard
+      {CAPABILITIES.map((capability, index) => {
+        const isActive = activeIndex === index;
+        const isHovered = hoveredIndex === index;
+        const muted =
+          hoveredIndex !== null && !isHovered && activeIndex !== index;
+
+        return (
+          <CapabilityCardShell
             key={capability.number}
             capability={capability}
             index={index}
+            active={isActive}
+            muted={muted}
+            awake={awake}
+            reducedMotion={prefersReducedMotion}
+            onActivate={() =>
+              setActiveIndex((current) => (current === index ? null : index))
+            }
+            onHoverChange={setHoveredIndex}
           />
-        )
-      )}
+        );
+      })}
     </div>
   );
 }

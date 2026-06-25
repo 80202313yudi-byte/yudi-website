@@ -17,7 +17,7 @@ export default function HomePage(): ReactNode {
   return (
     <main id="main-content" className="flex flex-1 flex-col gap-20 sm:gap-28">
       <Hero />
-      <Projects withHeadline viewMoreVisible />
+      <Projects withHeadline viewMoreVisible source="home" />
       <ContactCard />
       <div className="h-12 sm:h-16" />
     </main>

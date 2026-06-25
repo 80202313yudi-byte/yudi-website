@@ -25,7 +25,7 @@ export default function ProjectsPage(): ReactNode {
           </p>
         </FadeIn>
       </section>
-      <Projects />
+      <Projects source="projects" />
       <ContactCard />
       <div className="h-12 sm:h-16" />
     </main>

@@ -3,15 +3,15 @@ import type { ReactNode } from "react";
 import { HeroCtas } from "./hero-ctas";
 import GradualBlur from "@/components/ui/gradual-blur";
 import { FadeIn, ScaleUnblur } from "@/components/ui/motion-primitives";
-import RotatingText from "@/components/ui/rotating-text";
+import { TypewriterRotatingText } from "@/components/ui/typewriter-rotating-text";
 import { PortraitMorph } from "./portrait-morph";
 
 const PORTRAIT_SRC = "/josh.webp";
 const PORTRAIT_HOVER_SRC = "/josh_wave.webp";
 const POSITIONING_KEYWORDS = [
+  "内容封面包装",
   "AI 视觉系统",
   "品牌识别设计",
-  "内容封面包装",
   "作品页面设计",
 ];
 
@@ -30,21 +30,12 @@ export function Hero(): ReactNode {
               <span className="text-brand-strong">FISHDI</span>
             </p>
 
-            <div className="flex flex-wrap items-center gap-2 text-[15px] leading-none tracking-tight text-foreground/55">
+            <div className="flex flex-wrap items-baseline gap-2 text-[15px] leading-none tracking-tight text-foreground/55">
               <span>聚焦</span>
-              <RotatingText
+              <TypewriterRotatingText
                 texts={POSITIONING_KEYWORDS}
-                splitBy="lines"
-                staggerDuration={0}
-                rotationInterval={2700}
-                srText={`定位关键词：${POSITIONING_KEYWORDS.join("、")}`}
-                mainClassName="hero-positioning-keyword min-h-8 items-center overflow-hidden rounded-full border border-foreground/10 bg-background/75 px-3 py-1 font-medium text-brand-strong shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.035]"
-                splitLevelClassName="overflow-hidden pb-0.5"
-                elementLevelClassName="leading-none"
-                initial={{ y: "110%", opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: "-110%", opacity: 0 }}
-                transition={{ type: "spring", damping: 32, stiffness: 360 }}
+                className="font-medium text-brand-strong"
+                cursorClassName="text-brand-strong"
               />
             </div>
 

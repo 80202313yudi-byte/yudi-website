@@ -18,11 +18,13 @@ import { projects, type Project, type ProjectIcon } from "@/lib/projects";
 export type ProjectsProps = {
   withHeadline?: boolean;
   viewMoreVisible?: boolean;
+  source?: "home" | "projects";
 };
 
 export function Projects({
   withHeadline = false,
   viewMoreVisible = false,
+  source = viewMoreVisible ? "home" : "projects",
 }: ProjectsProps): ReactNode {
   const items = viewMoreVisible ? projects.slice(0, 4) : projects;
 
@@ -45,14 +47,20 @@ export function Projects({
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-7">
           {items.map((project, index) => (
-            <ProjectCard key={project.slug} project={project} index={index} />
+            <ProjectCard
+              key={project.slug}
+              project={project}
+              index={index}
+              source={source}
+            />
           ))}
         </div>
 
         {viewMoreVisible ? (
           <div className="mt-12 flex justify-center sm:mt-16">
             <Link
-              href="/projects"
+              href="/projects?scroll=top"
+              scroll={false}
               className="focus-ring group border-foreground/8 bg-background text-foreground hover:border-brand-line hover:bg-brand-soft hover:text-brand-strong inline-flex cursor-pointer items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-medium transition-colors"
             >
               查看全部
@@ -71,17 +79,26 @@ export function Projects({
 function ProjectCard({
   project,
   index,
+  source,
 }: {
   project: Project;
   index: number;
+  source: "home" | "projects";
 }): ReactNode {
   const Icon = PROJECT_ICONS[project.icon];
+  const projectId =
+    source === "home"
+      ? `featured-project-${project.slug}`
+      : `all-project-${project.slug}`;
+
   return (
     <FadeIn delay={Math.min(index * 0.06, 0.3)} className="h-full">
       <Link
-        href={`/projects/${project.slug}`}
+        id={projectId}
+        href={`/projects/${project.slug}?from=${source}`}
+        scroll={true}
         data-project-card={project.slug}
-        className="project-card focus-ring border-foreground/8 bg-background flex h-full cursor-pointer flex-col gap-4 rounded-3xl border p-3 text-left no-underline sm:p-3.5"
+        className="project-card focus-ring border-foreground/8 bg-background flex h-full scroll-mt-32 cursor-pointer flex-col gap-4 rounded-3xl border p-3 text-left no-underline sm:p-3.5"
         aria-label={`查看${project.category}项目详情`}
       >
         <header className="flex items-center gap-2.5 px-1 pt-2">
