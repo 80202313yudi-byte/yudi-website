@@ -235,7 +235,8 @@ Reduced motion is centralized in `lib/motion.tsx` through
 must call `useReducedMotion()`:
 
 - `ShaderFlow` renders a static gradient and does not create OGL/WebGL or RAF.
-- `Stack` renders a static tool-tag layout and does not import Matter.js.
+- `Stack` keeps the Matter.js physics tag layout for normal-motion users and
+  falls back to static wrapped tool tags for reduced-motion or narrow screens.
 - `FadeIn` / `ScaleUnblur` render static wrappers.
 - `PolaroidStrip`, `Experience`, `Nav`, `SmoothScroll`, and contact CTA layout
   effects disable transform, spring, view, or layout animation while preserving
@@ -266,6 +267,20 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-06-25: Re-copied the About `常用工具` Stack behavior from the original
+  template's Matter.js implementation, including the compact rounded frame,
+  falling chips, drag interaction, and reset button, while keeping text-badge
+  icons instead of remote logo images to avoid broken images.
+- 2026-06-25: Restored Matter.js physics in the About `常用工具` Stack while
+  removing all image-based tool icons. Tool badges now use local text
+  abbreviations only, preventing broken image icons and external logo requests.
+- 2026-06-25: Rebuilt the About `常用工具` Stack as a static scattered tool
+  tag wall with colorful local text-badge pills, a wide rounded container,
+  reset-triggered entrance animation, desktop hover lift, and mobile flex-wrap
+  fallback without external logo images or Matter.js physics.
+- 2026-06-25: Updated the About `创作工具` Stack chips to mirror the original
+  template's Stack demo labels and color rhythm while keeping stable local text
+  badges instead of remote logo images.
 - 2026-06-25: Split the contact email button into a desktop-only implementation
   that matches the original template's Motion layout reveal and a separate
   mobile-only copy button, removing the old fine-pointer runtime branch that
