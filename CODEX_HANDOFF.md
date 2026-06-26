@@ -37,8 +37,10 @@ redesign.
 - Chinese page-level titles use the local `.font-cjk-title` utility from
   `app/globals.css`, backed by a stable system sans-serif CJK stack. This avoids
   mixed Fraunces/CJK fallback runs in mobile WebViews. Keep `font-serif` for
-  Latin editorial text rather than applying it to Chinese title strings. Do not
-  add remote CJK font dependencies unless the user explicitly asks.
+  Latin editorial text rather than applying it to Chinese title strings. The
+  project uses local system font stacks only and must not depend on
+  `next/font/google` or other remote font fetches unless the user explicitly
+  asks.
 - Current project images are placeholders and should be replaced later
 - Real project images should preserve original color, not be forced through a
   green or grayscale filter
@@ -234,7 +236,10 @@ Reduced motion is centralized in `lib/motion.tsx` through
 `ReducedMotionProvider`. Components that create sustained or complex animation
 must call `useReducedMotion()`:
 
-- `ShaderFlow` renders a static gradient and does not create OGL/WebGL or RAF.
+- `ShaderFlow` renders a static gradient and does not create OGL/WebGL or RAF
+  when reduced motion is enabled or WebGL is unavailable.
+- `PortraitMorph` falls back to the static `/josh.webp` portrait if WebGL or
+  OGL initialization fails, so the page must not crash on no-WebGL devices.
 - `Stack` keeps the Matter.js physics tag layout for normal-motion users and
   falls back to static wrapped tool tags for reduced-motion or narrow screens.
 - `FadeIn` / `ScaleUnblur` render static wrappers.
@@ -267,6 +272,10 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-06-26: Removed `next/font/google` so offline/static builds use only local
+  system font stacks, and added WebGL capability/error fallbacks so
+  `ShaderFlow` and `PortraitMorph` degrade to static visuals instead of
+  throwing a Next.js application error on no-WebGL devices.
 - 2026-06-26: Applied the scoped FISHDI bugfix prompt: corrected the projects
   archive top spacing class, restored About page FadeIn reading order, rendered
   external contact social links as plain anchors, preloaded the portrait hover

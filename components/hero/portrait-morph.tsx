@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { Renderer, Program, Mesh, Triangle, Transform, Texture } from "ogl";
 
 import { useReducedMotion } from "@/lib/motion";
+import { supportsWebGL } from "@/lib/webgl";
 
 export type PortraitMorphProps = {
   srcA: string;
@@ -124,6 +125,7 @@ export function PortraitMorph({
 }: PortraitMorphProps): ReactNode {
   const containerRef = useRef<HTMLButtonElement | null>(null);
   const [ready, setReady] = useState(false);
+  const [webglUnavailable, setWebglUnavailable] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const hoverRef = useRef(false);
   const progressRef = useRef(0);
@@ -142,33 +144,63 @@ export function PortraitMorph({
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    let effectActive = true;
+
+    const setStaticFallback = () => {
+      queueMicrotask(() => {
+        if (!effectActive) return;
+        setReady(false);
+        setWebglUnavailable(true);
+      });
+    };
 
     hoverRef.current = false;
     progressRef.current = 0;
     lastPointerRef.current = null;
 
     if (prefersReducedMotion) return;
+    if (!supportsWebGL()) {
+      setStaticFallback();
+      return () => {
+        effectActive = false;
+      };
+    }
 
     const supportsFineHover = window.matchMedia(
       "(hover: hover) and (pointer: fine)"
     ).matches;
 
-    const renderer = new Renderer({
-      alpha: true,
-      premultipliedAlpha: false,
-      dpr: Math.min(window.devicePixelRatio || 1, 2),
-    });
-    const gl = renderer.gl;
-    const canvas = gl.canvas as HTMLCanvasElement;
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
-    canvas.style.display = "block";
-    container.appendChild(canvas);
+    let renderer: Renderer;
+    let gl: Renderer["gl"];
+    let canvas: HTMLCanvasElement;
+    let scene: Transform;
+    let texA: Texture;
+    let texB: Texture;
+    let program: Program;
 
-    const scene = new Transform();
+    try {
+      renderer = new Renderer({
+        alpha: true,
+        premultipliedAlpha: false,
+        dpr: Math.min(window.devicePixelRatio || 1, 2),
+      });
+      gl = renderer.gl;
+      canvas = gl.canvas as HTMLCanvasElement;
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+      canvas.style.display = "block";
+      container.appendChild(canvas);
 
-    const texA = new Texture(gl, { generateMipmaps: false });
-    const texB = new Texture(gl, { generateMipmaps: false });
+      scene = new Transform();
+
+      texA = new Texture(gl, { generateMipmaps: false });
+      texB = new Texture(gl, { generateMipmaps: false });
+    } catch {
+      setStaticFallback();
+      return () => {
+        effectActive = false;
+      };
+    }
 
     const imageSize: [number, number] = [1, 1];
 
@@ -186,24 +218,33 @@ export function PortraitMorph({
         img.src = src;
       });
 
-    const geometry = new Triangle(gl);
-    const program = new Program(gl, {
-      vertex: VERTEX_SHADER,
-      fragment: FRAGMENT_SHADER,
-      uniforms: {
-        uTexA: { value: texA },
-        uTexB: { value: texB },
-        uProgress: { value: 0 },
-        uTime: { value: 0 },
-        uResolution: { value: [1, 1] as [number, number] },
-        uImageSize: { value: imageSize },
-        uOrigin: { value: [0.5, 0.5] as [number, number] },
-        uDirection: { value: [1, 0] as [number, number] },
-      },
-      transparent: true,
-    });
-    const mesh = new Mesh(gl, { geometry, program });
-    mesh.setParent(scene);
+    try {
+      const geometry = new Triangle(gl);
+      program = new Program(gl, {
+        vertex: VERTEX_SHADER,
+        fragment: FRAGMENT_SHADER,
+        uniforms: {
+          uTexA: { value: texA },
+          uTexB: { value: texB },
+          uProgress: { value: 0 },
+          uTime: { value: 0 },
+          uResolution: { value: [1, 1] as [number, number] },
+          uImageSize: { value: imageSize },
+          uOrigin: { value: [0.5, 0.5] as [number, number] },
+          uDirection: { value: [1, 0] as [number, number] },
+        },
+        transparent: true,
+      });
+      const mesh = new Mesh(gl, { geometry, program });
+      mesh.setParent(scene);
+    } catch {
+      if (canvas.parentNode === container) container.removeChild(canvas);
+      gl.getExtension("WEBGL_lose_context")?.loseContext();
+      setStaticFallback();
+      return () => {
+        effectActive = false;
+      };
+    }
 
     const resize = () => {
       const w = container.clientWidth;
@@ -277,6 +318,7 @@ export function PortraitMorph({
     Promise.all([loadImage(srcA, texA), loadImage(srcB, texB)])
       .then(() => {
         setReady(true);
+        setWebglUnavailable(false);
         last = performance.now();
         tick();
         texturesReady = true;
@@ -376,6 +418,7 @@ export function PortraitMorph({
     container.addEventListener("click", onClick);
 
     return () => {
+      effectActive = false;
       running = false;
       cancelAnimationFrame(raf);
       window.clearTimeout(demoDelay);
@@ -392,7 +435,7 @@ export function PortraitMorph({
     };
   }, [srcA, srcB, prefersReducedMotion]);
 
-  const showFallback = !ready || prefersReducedMotion;
+  const showFallback = !ready || prefersReducedMotion || webglUnavailable;
 
   return (
     <button
@@ -408,7 +451,7 @@ export function PortraitMorph({
         height: "100%",
         filter: "grayscale(100%)",
         display: "block",
-        cursor: prefersReducedMotion ? "default" : "pointer",
+        cursor: prefersReducedMotion || webglUnavailable ? "default" : "pointer",
         appearance: "none",
         border: 0,
         padding: 0,

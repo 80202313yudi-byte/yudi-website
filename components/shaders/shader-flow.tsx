@@ -1,9 +1,10 @@
 "use client";
 
 import { Mesh, Program, Renderer, Transform, Triangle } from "ogl";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { useReducedMotion } from "@/lib/motion";
+import { supportsWebGL } from "@/lib/webgl";
 
 export type ShaderFlowProps = {
   className?: string;
@@ -132,6 +133,7 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
   const ref = useRef<HTMLDivElement | null>(null);
   const pr = useRef(props);
   const prefersReducedMotion = useReducedMotion();
+  const [webglUnavailable, setWebglUnavailable] = useState(false);
 
   useEffect(() => {
     pr.current = props;
@@ -142,129 +144,167 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
 
     const el = ref.current;
     if (!el) return;
+    let effectActive = true;
 
-    const r = new Renderer({
-      dpr: Math.min(window.devicePixelRatio || 1, 1),
-      alpha: false,
-      antialias: false,
-      powerPreference: "high-performance",
-    });
-    const gl = r.gl;
-    gl.canvas.style.width = "100%";
-    gl.canvas.style.height = "100%";
-    gl.canvas.style.display = "block";
-    el.appendChild(gl.canvas);
-
-    const geo = new Triangle(gl);
-    const p = new Program(gl, {
-      vertex: VS,
-      fragment: FS,
-      uniforms: {
-        uT: { value: 0 },
-        uR: { value: [1, 1] },
-        uV: { value: [...D.flowSpeed] },
-        uS: { value: D.scale },
-        uTw: { value: 50 },
-        uDe: { value: 200 },
-        uMs: { value: 2.5 },
-        uB: { value: D.brightness },
-        uIt: { value: D.iterations },
-        uColorLow: { value: [...D.colorLowA] },
-        uColorHigh: { value: [...D.colorHighA] },
-        uBgColor: { value: readBgColor(document.documentElement) },
-        uFadeShape: {
-          value: [D.fadeCx, D.fadeCy, D.fadeRx, D.fadeRy],
-        },
-      },
-    });
-
-    if (!p.uniformLocations) {
-      console.error("Shader link failed", {
-        v: gl.getShaderInfoLog(p.vertexShader),
-        f: gl.getShaderInfoLog(p.fragmentShader),
+    const setStaticFallback = () => {
+      queueMicrotask(() => {
+        if (!effectActive) return;
+        setWebglUnavailable(true);
       });
-      return;
+    };
+
+    if (!supportsWebGL()) {
+      setStaticFallback();
+      return () => {
+        effectActive = false;
+      };
     }
 
-    const mesh = new Mesh(gl, { geometry: geo, program: p });
-    const scene = new Transform();
-    mesh.setParent(scene);
-
-    const onResize = (): void => {
-      const w = el.clientWidth;
-      const h = el.clientHeight;
-      r.setSize(w, h);
-      p.uniforms.uR.value = [gl.drawingBufferWidth, gl.drawingBufferHeight];
-    };
-
-    onResize();
-    const ro = new ResizeObserver(onResize);
-    ro.observe(el);
-
+    let renderer: Renderer | null = null;
+    let gl: Renderer["gl"] | null = null;
+    let canvas: HTMLCanvasElement | null = null;
     let raf = 0;
-    let visible = true;
-    let onScreen = true;
-    const t0 = performance.now();
+    const cleanup: Array<() => void> = [];
 
-    const onVisibility = (): void => {
-      visible = document.visibilityState === "visible";
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) onScreen = e.isIntersecting;
-      },
-      { rootMargin: "100px" }
-    );
-    io.observe(el);
-
-    const syncBg = (): void => {
-      p.uniforms.uBgColor.value = readBgColor(document.documentElement);
-    };
-    const themeObserver = new MutationObserver(syncBg);
-    themeObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class", "data-theme", "style"],
-    });
-    syncBg();
-
-    const sync = (): void => {
-      const c = pr.current;
-      p.uniforms.uV.value = [...(c.flowSpeed ?? D.flowSpeed)];
-      p.uniforms.uS.value = c.scale ?? D.scale;
-      p.uniforms.uB.value = c.brightness ?? D.brightness;
-      p.uniforms.uIt.value = c.iterations ?? D.iterations;
-      p.uniforms.uColorLow.value = [...(c.colorLowA ?? D.colorLowA)];
-      p.uniforms.uColorHigh.value = [...(c.colorHighA ?? D.colorHighA)];
-      p.uniforms.uFadeShape.value = [
-        c.fadeCx ?? D.fadeCx,
-        c.fadeCy ?? D.fadeCy,
-        c.fadeRx ?? D.fadeRx,
-        c.fadeRy ?? D.fadeRy,
-      ];
-    };
-
-    const tick = (): void => {
-      if (visible && onScreen) {
-        p.uniforms.uT.value = (performance.now() - t0) / 1000;
-        sync();
-        r.render({ scene });
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-
-    return () => {
+    const cleanupWebGL = (): void => {
       cancelAnimationFrame(raf);
-      ro.disconnect();
-      io.disconnect();
-      themeObserver.disconnect();
-      document.removeEventListener("visibilitychange", onVisibility);
-      if (gl.canvas.parentElement === el) el.removeChild(gl.canvas);
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
+      for (const fn of cleanup) fn();
+      if (canvas?.parentElement === el) el.removeChild(canvas);
+      gl?.getExtension("WEBGL_lose_context")?.loseContext();
     };
+
+    try {
+      renderer = new Renderer({
+        dpr: Math.min(window.devicePixelRatio || 1, 1),
+        alpha: false,
+        antialias: false,
+        powerPreference: "high-performance",
+      });
+      gl = renderer.gl;
+      canvas = gl.canvas as HTMLCanvasElement;
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+      canvas.style.display = "block";
+      el.appendChild(canvas);
+
+      const geo = new Triangle(gl);
+      const p = new Program(gl, {
+        vertex: VS,
+        fragment: FS,
+        uniforms: {
+          uT: { value: 0 },
+          uR: { value: [1, 1] },
+          uV: { value: [...D.flowSpeed] },
+          uS: { value: D.scale },
+          uTw: { value: 50 },
+          uDe: { value: 200 },
+          uMs: { value: 2.5 },
+          uB: { value: D.brightness },
+          uIt: { value: D.iterations },
+          uColorLow: { value: [...D.colorLowA] },
+          uColorHigh: { value: [...D.colorHighA] },
+          uBgColor: { value: readBgColor(document.documentElement) },
+          uFadeShape: {
+            value: [D.fadeCx, D.fadeCy, D.fadeRx, D.fadeRy],
+          },
+        },
+      });
+
+      if (!p.uniformLocations) {
+        throw new Error("ShaderFlow program failed to link.");
+      }
+
+      const mesh = new Mesh(gl, { geometry: geo, program: p });
+      const scene = new Transform();
+      mesh.setParent(scene);
+
+      const onResize = (): void => {
+        const w = el.clientWidth;
+        const h = el.clientHeight;
+        renderer?.setSize(w, h);
+        if (gl) {
+          p.uniforms.uR.value = [gl.drawingBufferWidth, gl.drawingBufferHeight];
+        }
+      };
+
+      onResize();
+      const ro = new ResizeObserver(onResize);
+      ro.observe(el);
+      cleanup.push(() => ro.disconnect());
+
+      let visible = true;
+      let onScreen = true;
+      const t0 = performance.now();
+
+      const onVisibility = (): void => {
+        visible = document.visibilityState === "visible";
+      };
+      document.addEventListener("visibilitychange", onVisibility);
+      cleanup.push(() =>
+        document.removeEventListener("visibilitychange", onVisibility)
+      );
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) onScreen = e.isIntersecting;
+        },
+        { rootMargin: "100px" }
+      );
+      io.observe(el);
+      cleanup.push(() => io.disconnect());
+
+      const syncBg = (): void => {
+        p.uniforms.uBgColor.value = readBgColor(document.documentElement);
+      };
+      const themeObserver = new MutationObserver(syncBg);
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class", "data-theme", "style"],
+      });
+      cleanup.push(() => themeObserver.disconnect());
+      syncBg();
+
+      const sync = (): void => {
+        const c = pr.current;
+        p.uniforms.uV.value = [...(c.flowSpeed ?? D.flowSpeed)];
+        p.uniforms.uS.value = c.scale ?? D.scale;
+        p.uniforms.uB.value = c.brightness ?? D.brightness;
+        p.uniforms.uIt.value = c.iterations ?? D.iterations;
+        p.uniforms.uColorLow.value = [...(c.colorLowA ?? D.colorLowA)];
+        p.uniforms.uColorHigh.value = [...(c.colorHighA ?? D.colorHighA)];
+        p.uniforms.uFadeShape.value = [
+          c.fadeCx ?? D.fadeCx,
+          c.fadeCy ?? D.fadeCy,
+          c.fadeRx ?? D.fadeRx,
+          c.fadeRy ?? D.fadeRy,
+        ];
+      };
+
+      const tick = (): void => {
+        if (visible && onScreen && renderer) {
+          p.uniforms.uT.value = (performance.now() - t0) / 1000;
+          sync();
+          renderer.render({ scene });
+        }
+        raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+      setWebglUnavailable(false);
+
+      return () => {
+        effectActive = false;
+        cleanupWebGL();
+      };
+    } catch {
+      cleanupWebGL();
+      setStaticFallback();
+      return () => {
+        effectActive = false;
+      };
+    }
   }, [prefersReducedMotion]);
+
+  const fallback = prefersReducedMotion || webglUnavailable;
 
   return (
     <div
@@ -272,7 +312,7 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
       aria-hidden="true"
       className={props.className ?? "absolute inset-0 h-full w-full grayscale"}
       style={
-        prefersReducedMotion
+        fallback
           ? {
               background:
                 "radial-gradient(ellipse 90% 70% at 50% 0%, color-mix(in srgb, var(--brand) 16%, transparent), transparent 68%)",
