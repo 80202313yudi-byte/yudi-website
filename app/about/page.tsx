@@ -23,7 +23,7 @@ export default function AboutPage(): ReactNode {
       </section>
 
       <section className="mx-auto w-full max-w-160 px-6 pt-20 pb-16 sm:px-10 sm:pt-28 sm:pb-24">
-        <FadeIn delay={0.5}>
+        <FadeIn delay={0.1}>
           <div className="border-foreground/5 bg-foreground/1.5 dark:bg-foreground/3 rounded-4xl border p-8 sm:p-12">
             <h1 className="font-cjk-title text-foreground text-[1.75rem] font-medium tracking-tight sm:text-[2rem]">
               我是{" "}
@@ -61,7 +61,7 @@ export default function AboutPage(): ReactNode {
       </section>
 
       <section className="mx-auto w-full max-w-[40rem] px-6 pb-12 sm:px-10 sm:pb-16">
-        <FadeIn delay={0.1}>
+        <FadeIn delay={0.3}>
           <div className="flex flex-col gap-10">
             <Experience />
             <Education />

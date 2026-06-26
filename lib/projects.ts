@@ -46,6 +46,9 @@ const VISUALS = {
     "https://cdn.dribbble.com/userupload/16560717/file/original-c6f745d50302d66609bfe080f99f5396.png?resize=1024x768&vertical=center",
 } as const;
 
+// TODO: replace all VISUALS.* references inside detailImages with
+// project-specific asset paths before publishing real work.
+// Each project's detailImages must only reference its own assets.
 const detailSet = (
   first: ProjectImage,
   second: ProjectImage,

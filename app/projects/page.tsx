@@ -14,7 +14,7 @@ export const metadata: Metadata = createMetadata({
 export default function ProjectsPage(): ReactNode {
   return (
     <main id="main-content" className="flex flex-1 flex-col">
-      <section className="mx-auto w-full max-w-275 px-6 pt-44 pb-16 sm:px-10 sm:pt-100 sm:pb-20">
+      <section className="mx-auto w-full max-w-275 px-6 pt-44 pb-16 sm:px-10 sm:pt-56 sm:pb-20">
         <FadeIn className="flex flex-col items-center gap-5 text-center">
           <h1 className="font-cjk-title text-foreground text-[2.75rem] leading-[1.08] font-medium tracking-tight md:text-[3.25rem] lg:text-[3.75rem]">
             全部作品

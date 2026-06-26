@@ -92,28 +92,42 @@ function SocialIcon({
   imageSrc?: string;
 }): ReactNode {
   const isExternal = href.startsWith("http");
-  const props = isExternal
-    ? { target: "_blank", rel: "noopener noreferrer" }
-    : {};
+  const className =
+    "focus-ring border-foreground/8 bg-background text-foreground/70 hover:border-brand-line hover:bg-brand-soft hover:text-brand-strong inline-flex h-11 w-11 items-center justify-center rounded-xl border transition-colors";
+  const icon = LucideIcon ? (
+    <LucideIcon className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
+  ) : imageSrc ? (
+    <Image
+      src={imageSrc}
+      alt=""
+      width={14}
+      height={14}
+      aria-hidden="true"
+      className="max-h-[14px] max-w-[14px] object-contain dark:invert"
+    />
+  ) : null;
+
+  if (isExternal) {
+    return (
+      <a
+        href={href}
+        aria-label={label}
+        className={className}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {icon}
+      </a>
+    );
+  }
+
   return (
     <Link
       href={href}
       aria-label={label}
-      className="focus-ring border-foreground/8 bg-background text-foreground/70 hover:border-brand-line hover:bg-brand-soft hover:text-brand-strong inline-flex h-11 w-11 items-center justify-center rounded-xl border transition-colors"
-      {...props}
+      className={className}
     >
-      {LucideIcon ? (
-        <LucideIcon className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
-      ) : imageSrc ? (
-        <Image
-          src={imageSrc}
-          alt=""
-          width={14}
-          height={14}
-          aria-hidden="true"
-          className="max-h-[14px] max-w-[14px] object-contain dark:invert"
-        />
-      ) : null}
+      {icon}
     </Link>
   );
 }

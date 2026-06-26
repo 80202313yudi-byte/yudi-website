@@ -132,6 +132,14 @@ export function PortraitMorph({
   const lastPointerRef = useRef<{ x: number; y: number; t: number } | null>(null);
 
   useEffect(() => {
+    const image = new window.Image();
+    image.src = srcB;
+    return () => {
+      image.src = "";
+    };
+  }, [srcB]);
+
+  useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 

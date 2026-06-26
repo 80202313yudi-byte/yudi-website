@@ -1,6 +1,6 @@
 # FISHDI Portfolio - Codex Handoff
 
-Last updated: 2026-06-25
+Last updated: 2026-06-26
 
 Read this before modifying the project. Keep it current when architecture,
 content, deployment, routes, assets, dependencies, or known issues change.
@@ -267,6 +267,11 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-06-26: Applied the scoped FISHDI bugfix prompt: corrected the projects
+  archive top spacing class, restored About page FadeIn reading order, rendered
+  external contact social links as plain anchors, preloaded the portrait hover
+  image, fixed the Experience collapsed peek height, and documented the
+  project-specific `detailImages` asset follow-up.
 - 2026-06-25: Re-copied the About `常用工具` Stack behavior from the original
   template's Matter.js implementation, including the compact rounded frame,
   falling chips, drag interaction, and reset button, while keeping text-badge

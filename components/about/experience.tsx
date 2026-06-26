@@ -68,7 +68,7 @@ export function Experience(): ReactNode {
   const prefersReducedMotion = useReducedMotion();
   const collapsedHeight =
     Math.floor(COLLAPSED_COUNT) * ROW_HEIGHT +
-    Math.floor(COLLAPSED_COUNT) * ROW_GAP +
+    (Math.floor(COLLAPSED_COUNT) + 1) * ROW_GAP +
     (COLLAPSED_COUNT % 1) * ROW_HEIGHT;
   const hiddenCount = ENTRIES.length - Math.floor(COLLAPSED_COUNT);
 
