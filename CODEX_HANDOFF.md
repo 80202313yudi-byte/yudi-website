@@ -23,12 +23,10 @@ redesign.
 
 - Minimal portfolio language from the React Bits Pro portfolio template
 - Light/dark theme support, centered capsule navigation, generous spacing
-- The theme toggle uses a 700ms linear circular reveal. Before the
-  View Transition captures its old/new root snapshots, `ShaderFlow` and
-  `PortraitMorph` pause WebGL rendering and hide their canvases behind static
-  fallbacks through `lib/theme-transition.ts` plus
-  `data-theme-capture="1"`. They resume when the transition finishes. Keep the
-  reveal, canvas-capture fallback, and reduced-motion behavior coordinated.
+- The theme toggle uses a 700ms linear circular reveal. `ShaderFlow` and
+  `PortraitMorph` keep their normal WebGL render loops active during theme
+  switching; do not replace them with static capture fallbacks. Keep the
+  constant-speed reveal and reduced-motion behavior coordinated.
 - Large serif headings, restrained cards, subtle borders, soft motion
 - A restrained FISHDI brand signal color is defined globally in
   `app/globals.css` as `--brand`, `--brand-strong`, `--brand-soft`, and
@@ -278,6 +276,9 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-07-24: Removed the theme-transition WebGL freeze and static canvas
+  capture fallbacks so the original flowing background and portrait rendering
+  remain active. Kept the 700ms linear circular reveal.
 - 2026-07-24: Changed the theme reveal timing function from the template's
   ease-out curve to `linear`, so the circle radius expands at a constant speed
   without the visible mid-animation slowdown.

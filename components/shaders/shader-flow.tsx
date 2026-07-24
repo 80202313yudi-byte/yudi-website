@@ -4,10 +4,6 @@ import { Mesh, Program, Renderer, Transform, Triangle } from "ogl";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { useReducedMotion } from "@/lib/motion";
-import {
-  themeTransitionEvent,
-  type ThemeTransitionDetail,
-} from "@/lib/theme-transition";
 import { supportsWebGL } from "@/lib/webgl";
 
 export type ShaderFlowProps = {
@@ -238,7 +234,6 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
 
       let visible = true;
       let onScreen = true;
-      let themeTransitionActive = false;
       const t0 = performance.now();
 
       const onVisibility = (): void => {
@@ -247,15 +242,6 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
       document.addEventListener("visibilitychange", onVisibility);
       cleanup.push(() =>
         document.removeEventListener("visibilitychange", onVisibility)
-      );
-
-      const onThemeTransition = (event: Event): void => {
-        const detail = (event as CustomEvent<ThemeTransitionDetail>).detail;
-        themeTransitionActive = detail?.active === true;
-      };
-      window.addEventListener(themeTransitionEvent, onThemeTransition);
-      cleanup.push(() =>
-        window.removeEventListener(themeTransitionEvent, onThemeTransition)
       );
 
       const io = new IntersectionObserver(
@@ -295,7 +281,7 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
       };
 
       const tick = (): void => {
-        if (visible && onScreen && renderer && !themeTransitionActive) {
+        if (visible && onScreen && renderer) {
           p.uniforms.uT.value = (performance.now() - t0) / 1000;
           sync();
           renderer.render({ scene });
@@ -325,13 +311,15 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
       ref={ref}
       aria-hidden="true"
       data-webgl-fallback={fallback ? "" : undefined}
-      className={`theme-webgl-surface ${
-        props.className ?? "absolute inset-0 h-full w-full grayscale"
-      }`}
-      style={{
-        background:
-          "radial-gradient(ellipse 90% 70% at 50% 0%, color-mix(in srgb, var(--brand) 16%, transparent), transparent 68%)",
-      }}
+      className={props.className ?? "absolute inset-0 h-full w-full grayscale"}
+      style={
+        fallback
+          ? {
+              background:
+                "radial-gradient(ellipse 90% 70% at 50% 0%, color-mix(in srgb, var(--brand) 16%, transparent), transparent 68%)",
+            }
+          : undefined
+      }
     />
   );
 }

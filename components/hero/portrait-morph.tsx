@@ -5,10 +5,6 @@ import type { ReactNode } from "react";
 import { Renderer, Program, Mesh, Triangle, Transform, Texture } from "ogl";
 
 import { useReducedMotion } from "@/lib/motion";
-import {
-  themeTransitionEvent,
-  type ThemeTransitionDetail,
-} from "@/lib/theme-transition";
 import { supportsWebGL } from "@/lib/webgl";
 
 export type PortraitMorphProps = {
@@ -275,18 +271,12 @@ export function PortraitMorph({
     let touchDemoRequested = false;
     let texturesReady = false;
     let touchDemoPlayed = false;
-    let themeTransitionActive = false;
 
     const tick = () => {
       if (!running) return;
       const now = performance.now();
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
-
-      if (themeTransitionActive) {
-        raf = requestAnimationFrame(tick);
-        return;
-      }
 
       time += dt;
 
@@ -304,12 +294,6 @@ export function PortraitMorph({
       renderer.render({ scene });
       raf = requestAnimationFrame(tick);
     };
-
-    const onThemeTransition = (event: Event): void => {
-      const detail = (event as CustomEvent<ThemeTransitionDetail>).detail;
-      themeTransitionActive = detail?.active === true;
-    };
-    window.addEventListener(themeTransitionEvent, onThemeTransition);
 
     const playTouchDemo = () => {
       if (
@@ -442,7 +426,6 @@ export function PortraitMorph({
       window.clearTimeout(demoRelease);
       intersectionObserver?.disconnect();
       ro.disconnect();
-      window.removeEventListener(themeTransitionEvent, onThemeTransition);
       container.removeEventListener("pointerenter", onPointerEnter);
       container.removeEventListener("pointerleave", onPointerLeave);
       container.removeEventListener("pointermove", onPointerMove);
@@ -463,7 +446,7 @@ export function PortraitMorph({
       aria-label={
         prefersReducedMotion ? alt : `${alt}，点击可切换头像状态`
       }
-      className={`focus-ring theme-webgl-surface ${className ?? ""}`}
+      className={`focus-ring ${className ?? ""}`}
       style={{
         position: "relative",
         width: "100%",
@@ -477,13 +460,15 @@ export function PortraitMorph({
         background: "transparent",
       }}
     >
-      <img
-        src={srcA}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        className="absolute inset-0 h-full w-full select-none object-cover"
-      />
+      {showFallback ? (
+        <img
+          src={srcA}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          className="absolute inset-0 h-full w-full select-none object-cover"
+        />
+      ) : null}
     </button>
   );
 }
