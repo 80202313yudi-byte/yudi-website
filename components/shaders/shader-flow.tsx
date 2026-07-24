@@ -324,15 +324,14 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
     <div
       ref={ref}
       aria-hidden="true"
-      className={props.className ?? "absolute inset-0 h-full w-full grayscale"}
-      style={
-        fallback
-          ? {
-              background:
-                "radial-gradient(ellipse 90% 70% at 50% 0%, color-mix(in srgb, var(--brand) 16%, transparent), transparent 68%)",
-            }
-          : undefined
-      }
+      data-webgl-fallback={fallback ? "" : undefined}
+      className={`theme-webgl-surface ${
+        props.className ?? "absolute inset-0 h-full w-full grayscale"
+      }`}
+      style={{
+        background:
+          "radial-gradient(ellipse 90% 70% at 50% 0%, color-mix(in srgb, var(--brand) 16%, transparent), transparent 68%)",
+      }}
     />
   );
 }

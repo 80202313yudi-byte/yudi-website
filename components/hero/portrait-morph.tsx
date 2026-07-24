@@ -459,10 +459,11 @@ export function PortraitMorph({
     <button
       ref={containerRef}
       type="button"
+      data-webgl-fallback={showFallback ? "" : undefined}
       aria-label={
         prefersReducedMotion ? alt : `${alt}，点击可切换头像状态`
       }
-      className={`focus-ring ${className ?? ""}`}
+      className={`focus-ring theme-webgl-surface ${className ?? ""}`}
       style={{
         position: "relative",
         width: "100%",
@@ -476,15 +477,13 @@ export function PortraitMorph({
         background: "transparent",
       }}
     >
-      {showFallback ? (
-        <img
-          src={srcA}
-          alt=""
-          aria-hidden="true"
-          draggable={false}
-          className="absolute inset-0 h-full w-full select-none object-cover"
-        />
-      ) : null}
+      <img
+        src={srcA}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="absolute inset-0 h-full w-full select-none object-cover"
+      />
     </button>
   );
 }

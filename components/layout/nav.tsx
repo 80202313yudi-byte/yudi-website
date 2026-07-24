@@ -76,27 +76,24 @@ function NavThemeToggle(): ReactNode {
     root.style.setProperty("--theme-cy", `${cy}px`);
     root.style.setProperty("--theme-r", `${radius}px`);
     root.dataset.themeAnim = "1";
+    root.dataset.themeCapture = "1";
+    setThemeTransitionActive(true);
 
     const transition = transitionDocument.startViewTransition?.(() => {
       setTheme(next);
     });
     if (!transition) {
       delete root.dataset.themeAnim;
+      delete root.dataset.themeCapture;
+      setThemeTransitionActive(false);
       setTheme(next);
       return;
     }
 
-    transition.ready
-      .then(() => {
-        setThemeTransitionActive(true);
-      })
-      .catch(() => {
-        setThemeTransitionActive(false);
-      });
-
     transition.finished.finally(() => {
       setThemeTransitionActive(false);
       delete root.dataset.themeAnim;
+      delete root.dataset.themeCapture;
     });
   };
 
