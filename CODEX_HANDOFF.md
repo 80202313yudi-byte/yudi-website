@@ -23,7 +23,7 @@ redesign.
 
 - Minimal portfolio language from the React Bits Pro portfolio template
 - Light/dark theme support, centered capsule navigation, generous spacing
-- The theme toggle preserves the original 700ms circular reveal. Before the
+- The theme toggle uses a 700ms linear circular reveal. Before the
   View Transition captures its old/new root snapshots, `ShaderFlow` and
   `PortraitMorph` pause WebGL rendering and hide their canvases behind static
   fallbacks through `lib/theme-transition.ts` plus
@@ -278,6 +278,9 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-07-24: Changed the theme reveal timing function from the template's
+  ease-out curve to `linear`, so the circle radius expands at a constant speed
+  without the visible mid-animation slowdown.
 - 2026-07-24: Moved the theme performance optimization ahead of the native View
   Transition snapshot: WebGL canvases now freeze and use static capture
   fallbacks before the old/new root images are created. Restored the template's
