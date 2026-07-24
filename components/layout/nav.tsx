@@ -15,6 +15,7 @@ import {
 } from "react";
 
 import { useReducedMotion } from "@/lib/motion";
+import { setThemeTransitionActive } from "@/lib/theme-transition";
 
 type NavItem = {
   label: string;
@@ -42,6 +43,12 @@ function NavThemeToggle(): ReactNode {
 
   const toggleTheme = (event: React.MouseEvent<HTMLButtonElement>): void => {
     const next = isDark ? "light" : "dark";
+    const transitionDocument = document as Document & {
+      startViewTransition?: (callback: () => void) => {
+        ready: Promise<void>;
+        finished: Promise<void>;
+      };
+    };
 
     const prefersReducedMotion =
       typeof window !== "undefined" &&
@@ -49,7 +56,7 @@ function NavThemeToggle(): ReactNode {
 
     const supportsViewTransitions =
       typeof document !== "undefined" &&
-      typeof document.startViewTransition === "function";
+      typeof transitionDocument.startViewTransition === "function";
 
     if (!supportsViewTransitions || prefersReducedMotion) {
       setTheme(next);
@@ -70,11 +77,25 @@ function NavThemeToggle(): ReactNode {
     root.style.setProperty("--theme-r", `${radius}px`);
     root.dataset.themeAnim = "1";
 
-    const transition = document.startViewTransition(() => {
+    const transition = transitionDocument.startViewTransition?.(() => {
       setTheme(next);
     });
+    if (!transition) {
+      delete root.dataset.themeAnim;
+      setTheme(next);
+      return;
+    }
+
+    transition.ready
+      .then(() => {
+        setThemeTransitionActive(true);
+      })
+      .catch(() => {
+        setThemeTransitionActive(false);
+      });
 
     transition.finished.finally(() => {
+      setThemeTransitionActive(false);
       delete root.dataset.themeAnim;
     });
   };

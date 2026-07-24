@@ -1,6 +1,6 @@
 # FISHDI Portfolio - Codex Handoff
 
-Last updated: 2026-06-26
+Last updated: 2026-07-24
 
 Read this before modifying the project. Keep it current when architecture,
 content, deployment, routes, assets, dependencies, or known issues change.
@@ -23,6 +23,11 @@ redesign.
 
 - Minimal portfolio language from the React Bits Pro portfolio template
 - Light/dark theme support, centered capsule navigation, generous spacing
+- The theme toggle preserves the original circular reveal, optimized to 520ms.
+  While the View Transition snapshot animates, `ShaderFlow` and
+  `PortraitMorph` pause WebGL rendering through `lib/theme-transition.ts` and
+  resume automatically when the transition finishes. Keep the visual reveal,
+  reduced-motion fallback, and render-pause event coordinated.
 - Large serif headings, restrained cards, subtle borders, soft motion
 - A restrained FISHDI brand signal color is defined globally in
   `app/globals.css` as `--brand`, `--brand-strong`, `--brand-soft`, and
@@ -272,6 +277,10 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-07-24: Optimized the circular light/dark theme reveal without changing
+  its visual direction: shortened it from 700ms to 520ms, added compositor
+  hints to the clipped snapshot, and paused background/portrait WebGL rendering
+  during the transition to reduce GPU contention.
 - 2026-06-26: Removed `next/font/google` so offline/static builds use only local
   system font stacks, and added WebGL capability/error fallbacks so
   `ShaderFlow` and `PortraitMorph` degrade to static visuals instead of

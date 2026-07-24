@@ -5,6 +5,10 @@ import type { ReactNode } from "react";
 import { Renderer, Program, Mesh, Triangle, Transform, Texture } from "ogl";
 
 import { useReducedMotion } from "@/lib/motion";
+import {
+  themeTransitionEvent,
+  type ThemeTransitionDetail,
+} from "@/lib/theme-transition";
 import { supportsWebGL } from "@/lib/webgl";
 
 export type PortraitMorphProps = {
@@ -271,12 +275,19 @@ export function PortraitMorph({
     let touchDemoRequested = false;
     let texturesReady = false;
     let touchDemoPlayed = false;
+    let themeTransitionActive = false;
 
     const tick = () => {
       if (!running) return;
       const now = performance.now();
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
+
+      if (themeTransitionActive) {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+
       time += dt;
 
       const target = hoverRef.current ? 1 : 0;
@@ -293,6 +304,12 @@ export function PortraitMorph({
       renderer.render({ scene });
       raf = requestAnimationFrame(tick);
     };
+
+    const onThemeTransition = (event: Event): void => {
+      const detail = (event as CustomEvent<ThemeTransitionDetail>).detail;
+      themeTransitionActive = detail?.active === true;
+    };
+    window.addEventListener(themeTransitionEvent, onThemeTransition);
 
     const playTouchDemo = () => {
       if (
@@ -425,6 +442,7 @@ export function PortraitMorph({
       window.clearTimeout(demoRelease);
       intersectionObserver?.disconnect();
       ro.disconnect();
+      window.removeEventListener(themeTransitionEvent, onThemeTransition);
       container.removeEventListener("pointerenter", onPointerEnter);
       container.removeEventListener("pointerleave", onPointerLeave);
       container.removeEventListener("pointermove", onPointerMove);
