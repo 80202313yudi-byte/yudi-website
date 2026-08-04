@@ -41,12 +41,6 @@ function NavThemeToggle(): ReactNode {
 
   const toggleTheme = (event: React.MouseEvent<HTMLButtonElement>): void => {
     const next = isDark ? "light" : "dark";
-    const transitionDocument = document as Document & {
-      startViewTransition?: (callback: () => void) => {
-        ready: Promise<void>;
-        finished: Promise<void>;
-      };
-    };
 
     const prefersReducedMotion =
       typeof window !== "undefined" &&
@@ -54,7 +48,7 @@ function NavThemeToggle(): ReactNode {
 
     const supportsViewTransitions =
       typeof document !== "undefined" &&
-      typeof transitionDocument.startViewTransition === "function";
+      typeof document.startViewTransition === "function";
 
     if (!supportsViewTransitions || prefersReducedMotion) {
       setTheme(next);
@@ -75,14 +69,9 @@ function NavThemeToggle(): ReactNode {
     root.style.setProperty("--theme-r", `${radius}px`);
     root.dataset.themeAnim = "1";
 
-    const transition = transitionDocument.startViewTransition?.(() => {
+    const transition = document.startViewTransition(() => {
       setTheme(next);
     });
-    if (!transition) {
-      delete root.dataset.themeAnim;
-      setTheme(next);
-      return;
-    }
 
     transition.finished.finally(() => {
       delete root.dataset.themeAnim;
@@ -101,7 +90,7 @@ function NavThemeToggle(): ReactNode {
           : "切换主题"
       }
       aria-pressed={mounted ? isDark : undefined}
-      className="focus-ring relative inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-background ring-1 ring-foreground/8 transition-colors hover:text-brand-strong hover:ring-brand-line"
+      className="focus-ring relative inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-background ring-1 ring-foreground/8 transition-colors"
     >
       <span aria-hidden="true" className="relative h-4 w-4">
         <Sun

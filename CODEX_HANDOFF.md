@@ -23,10 +23,11 @@ redesign.
 
 - Minimal portfolio language from the React Bits Pro portfolio template
 - Light/dark theme support, centered capsule navigation, generous spacing
-- The theme toggle uses a 700ms linear circular reveal. `ShaderFlow` and
+- The theme toggle matches the source `rbp-portfolio-main` implementation: a
+  700ms circular reveal using `cubic-bezier(0.22, 1, 0.36, 1)`. `ShaderFlow` and
   `PortraitMorph` keep their normal WebGL render loops active during theme
-  switching; do not replace them with static capture fallbacks. Keep the
-  constant-speed reveal and reduced-motion behavior coordinated.
+  switching; do not replace them with static capture fallbacks. Keep the source
+  template reveal and reduced-motion behavior coordinated.
 - Large serif headings, restrained cards, subtle borders, soft motion
 - A restrained FISHDI brand signal color is defined globally in
   `app/globals.css` as `--brand`, `--brand-strong`, `--brand-soft`, and
@@ -276,6 +277,10 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-08-04: Replaced only the light/dark theme toggle behavior and button
+  styling with the exact `rbp-portfolio-main.zip` implementation: restored its
+  700ms reveal curve, native `startViewTransition` call, and neutral toggle
+  hover style. All other site behavior and visuals remain unchanged.
 - 2026-07-24: Removed the theme-transition WebGL freeze and static canvas
   capture fallbacks so the original flowing background and portrait rendering
   remain active. Kept the 700ms linear circular reveal.
