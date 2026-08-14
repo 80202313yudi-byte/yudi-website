@@ -26,6 +26,13 @@ const NAV_ITEMS: readonly NavItem[] = [
   { label: "关⁠于", href: "/about" },
 ];
 
+const THEME_REVEAL_DURATION = 700;
+const THEME_REVEAL_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
+
+function usesChromiumThemeDriver(): boolean {
+  return /(?:Chrome|Chromium|Edg)\//.test(navigator.userAgent);
+}
+
 function useIsMounted(): boolean {
   return useSyncExternalStore(
     () => () => {},
@@ -69,13 +76,42 @@ function NavThemeToggle(): ReactNode {
     root.style.setProperty("--theme-r", `${radius}px`);
     root.dataset.themeAnim = "1";
 
+    const useChromiumDriver =
+      usesChromiumThemeDriver() && typeof root.animate === "function";
+    if (useChromiumDriver) root.dataset.themeDriver = "waapi";
+
+    const cleanup = (): void => {
+      delete root.dataset.themeAnim;
+      delete root.dataset.themeDriver;
+    };
+
     const transition = document.startViewTransition(() => {
       setTheme(next);
     });
 
-    transition.finished.finally(() => {
-      delete root.dataset.themeAnim;
-    });
+    if (!useChromiumDriver) {
+      transition.finished.finally(cleanup);
+      return;
+    }
+
+    transition.ready
+      .then(() =>
+        root.animate(
+          {
+            clipPath: [
+              `circle(0px at ${cx}px ${cy}px)`,
+              `circle(${radius}px at ${cx}px ${cy}px)`,
+            ],
+          },
+          {
+            duration: THEME_REVEAL_DURATION,
+            easing: THEME_REVEAL_EASING,
+            pseudoElement: "::view-transition-new(root)",
+          }
+        ).finished
+      )
+      .catch(() => undefined)
+      .finally(cleanup);
   };
 
   return (

@@ -23,11 +23,12 @@ redesign.
 
 - Minimal portfolio language from the React Bits Pro portfolio template
 - Light/dark theme support, centered capsule navigation, generous spacing
-- The theme toggle matches the source `rbp-portfolio-main` implementation: a
-  700ms circular reveal using `cubic-bezier(0.22, 1, 0.36, 1)`. `ShaderFlow` and
-  `PortraitMorph` keep their normal WebGL render loops active during theme
-  switching; do not replace them with static capture fallbacks. Keep the source
-  template reveal and reduced-motion behavior coordinated.
+- The theme toggle keeps the source `rbp-portfolio-main` 700ms circular reveal
+  from the toggle button using `cubic-bezier(0.22, 1, 0.36, 1)`. Safari keeps
+  the template CSS animation. Chrome and Edge use a Chromium-specific WAAPI
+  animation on `::view-transition-new(root)` to avoid the CSS clip-path
+  compositing hitch. `ShaderFlow` and `PortraitMorph` keep their normal WebGL
+  render loops active. Keep both browser paths visually synchronized.
 - Large serif headings, restrained cards, subtle borders, soft motion
 - A restrained FISHDI brand signal color is defined globally in
   `app/globals.css` as `--brand`, `--brand-strong`, `--brand-soft`, and
@@ -277,6 +278,11 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-08-14: Added a Chromium-only WAAPI driver for the light/dark circular
+  reveal while retaining the existing Safari CSS path. Chrome and Edge now
+  animate the same button-centered circle directly on the view-transition
+  pseudo-element, reducing the mid-transition compositing hitch without
+  changing the visual timing or WebGL background behavior.
 - 2026-08-04: Replaced only the light/dark theme toggle behavior and button
   styling with the exact `rbp-portfolio-main.zip` implementation: restored its
   700ms reveal curve, native `startViewTransition` call, and neutral toggle
