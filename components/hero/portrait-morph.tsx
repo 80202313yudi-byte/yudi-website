@@ -272,9 +272,16 @@ export function PortraitMorph({
     let texturesReady = false;
     let touchDemoPlayed = false;
 
-    const tick = () => {
+    const tick = (frameTime = performance.now()) => {
       if (!running) return;
-      const now = performance.now();
+      const now = frameTime;
+
+      if (document.documentElement.dataset.themeDriver === "waapi") {
+        last = now;
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
 

@@ -259,7 +259,7 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
       const themeObserver = new MutationObserver(syncBg);
       themeObserver.observe(document.documentElement, {
         attributes: true,
-        attributeFilter: ["class", "data-theme", "style"],
+        attributeFilter: ["class", "data-theme"],
       });
       cleanup.push(() => themeObserver.disconnect());
       syncBg();
@@ -280,9 +280,17 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
         ];
       };
 
-      const tick = (): void => {
-        if (visible && onScreen && renderer) {
-          p.uniforms.uT.value = (performance.now() - t0) / 1000;
+      let lastTransitionRender = 0;
+
+      const tick = (now: number): void => {
+        const chromiumThemeTransition =
+          document.documentElement.dataset.themeDriver === "waapi";
+        const transitionFrameReady =
+          !chromiumThemeTransition || now - lastTransitionRender >= 1000 / 30;
+
+        if (visible && onScreen && renderer && transitionFrameReady) {
+          lastTransitionRender = now;
+          p.uniforms.uT.value = (now - t0) / 1000;
           sync();
           renderer.render({ scene });
         }
