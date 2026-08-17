@@ -277,12 +277,13 @@ must call `useReducedMotion()`:
 
 - Review the generated 1254x1254 replacement candidates
   `public/fishdi-portrait-default-v1.png` and
-  `public/fishdi-portrait-wave-v3.png`; the preferred hover image now uses a
-  more clearly cartoon/anime rendering with a gentle closed-mouth smile and no
-  visible teeth. The earlier `public/fishdi-portrait-wave-v1.png` toothy-smile
-  and `public/fishdi-portrait-wave-v2.png` more realistic revisions are retained
-  only for comparison. After approval, wire the preferred pair into the Hero in
-  place of `public/josh.webp` and `public/josh_wave.webp`.
+  `public/fishdi-portrait-wave-3d-v4.png`; the latest hover candidate uses a
+  premium 3D chibi/blind-box rendering, warm home-studio lighting, a dark
+  pullover hoodie, and a gentle closed-mouth smile. Earlier waving revisions
+  remain available for comparison. The default portrait is still the earlier
+  2D candidate, so generate or approve a matching 3D default before wiring the
+  pair into the Hero in place of `public/josh.webp` and
+  `public/josh_wave.webp`.
 - Replace remote Dribbble placeholder project images with owned project assets
 - Replace placeholder social links in `components/contact/contact-card.tsx`
 - Replace public Gmail if the user does not want it visible
@@ -291,6 +292,10 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-08-17: Added `public/fishdi-portrait-wave-3d-v4.png`, a 1254x1254
+  premium 3D chibi/blind-box waving portrait based on the user's supplied style
+  references, with natural warm studio lighting, short black hair, a dark
+  pullover hoodie, and a closed-mouth smile. It remains an inactive candidate.
 - 2026-08-17: Added `public/fishdi-portrait-wave-v3.png`, a 1254x1254 cartoon-
   leaning revision with cleaner linework, simplified cel-shaded skin, and the
   approved closed-mouth smile. It remains an inactive candidate and was not
