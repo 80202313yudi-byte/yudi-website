@@ -277,11 +277,12 @@ must call `useReducedMotion()`:
 
 - Review the generated 1254x1254 replacement candidates
   `public/fishdi-portrait-default-v1.png` and
-  `public/fishdi-portrait-wave-3d-v4.png`; the latest hover candidate uses a
-  premium 3D chibi/blind-box rendering, warm home-studio lighting, a dark
-  pullover hoodie, and a gentle closed-mouth smile. Earlier waving revisions
-  remain available for comparison. The default portrait is still the earlier
-  2D candidate, so generate or approve a matching 3D default before wiring the
+  `public/fishdi-portrait-wave-3d-v5.png`; the latest hover candidate keeps the
+  premium 3D blind-box rendering while using young-adult facial proportions,
+  smaller eyes, a firmer jawline, warm home-studio lighting, a dark pullover
+  hoodie, and a gentle closed-mouth smile. Earlier waving revisions remain
+  available for comparison. The default portrait is still the earlier 2D
+  candidate, so generate or approve a matching 3D default before wiring the
   pair into the Hero in place of `public/josh.webp` and
   `public/josh_wave.webp`.
 - Replace remote Dribbble placeholder project images with owned project assets
@@ -292,6 +293,10 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-08-17: Added `public/fishdi-portrait-wave-3d-v5.png`, a 1254x1254
+  young-adult refinement of the 3D waving portrait. It reduces the oversized
+  eyes and childlike facial proportions while retaining the blind-box material,
+  warm studio setting, dark hoodie, and closed-mouth smile. It remains inactive.
 - 2026-08-17: Added `public/fishdi-portrait-wave-3d-v4.png`, a 1254x1254
   premium 3D chibi/blind-box waving portrait based on the user's supplied style
   references, with natural warm studio lighting, short black hair, a dark
