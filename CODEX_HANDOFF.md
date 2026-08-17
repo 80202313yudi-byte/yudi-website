@@ -25,12 +25,13 @@ redesign.
 - Light/dark theme support, centered capsule navigation, generous spacing
 - The theme toggle keeps the source `rbp-portfolio-main` 700ms circular reveal
   from the toggle button using `cubic-bezier(0.22, 1, 0.36, 1)`. Safari keeps
-  the template CSS animation. Chrome and Edge use a Chromium-specific WAAPI
-  animation on `::view-transition-new(root)` to avoid the CSS clip-path
-  compositing hitch. During the 700ms Chromium reveal, `ShaderFlow` remains
-  live at a stable 30fps while the visually static `PortraitMorph` render loop
-  yields GPU time to the transition. Outside that brief window, both WebGL
-  effects run normally. Keep both browser paths visually synchronized.
+  the template CSS animation. Chrome and Edge 151+ use a transform-only reveal:
+  a circular `::view-transition-group(theme-new)` scales outward while its
+  image pair counter-scales, keeping the new page visually stationary without
+  animating `clip-path`. During that 700ms reveal, `ShaderFlow` remains live at
+  a stable 30fps while the visually static `PortraitMorph` render loop yields
+  GPU time to the transition. Outside that brief window, both WebGL effects run
+  normally. Keep both browser paths visually synchronized.
 - Large serif headings, restrained cards, subtle borders, soft motion
 - A restrained FISHDI brand signal color is defined globally in
   `app/globals.css` as `--brand`, `--brand-strong`, `--brand-soft`, and
@@ -280,6 +281,10 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-08-17: Replaced the Chrome/Edge 151+ clip-path theme reveal with a
+  compositor-friendly transform/counter-transform circle. The reveal still
+  starts at the theme button and follows the original 700ms timing, while
+  Safari and other browsers retain the template CSS animation.
 - 2026-08-14: Added a Chromium-only WAAPI driver for the light/dark circular
   reveal while retaining the existing Safari CSS path. Chrome and Edge now
   animate the same button-centered circle directly on the view-transition

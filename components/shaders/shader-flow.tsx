@@ -284,7 +284,7 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
 
       const tick = (now: number): void => {
         const chromiumThemeTransition =
-          document.documentElement.dataset.themeDriver === "waapi";
+          document.documentElement.dataset.themeDriver === "transform";
         const transitionFrameReady =
           !chromiumThemeTransition || now - lastTransitionRender >= 1000 / 30;
 

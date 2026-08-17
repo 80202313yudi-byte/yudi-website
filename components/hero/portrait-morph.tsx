@@ -276,7 +276,7 @@ export function PortraitMorph({
       if (!running) return;
       const now = frameTime;
 
-      if (document.documentElement.dataset.themeDriver === "waapi") {
+      if (document.documentElement.dataset.themeDriver === "transform") {
         last = now;
         raf = requestAnimationFrame(tick);
         return;

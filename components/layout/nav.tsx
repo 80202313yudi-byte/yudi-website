@@ -27,10 +27,51 @@ const NAV_ITEMS: readonly NavItem[] = [
 ];
 
 const THEME_REVEAL_DURATION = 700;
-const THEME_REVEAL_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
+const THEME_REVEAL_SAMPLES = 48;
 
-function usesChromiumThemeDriver(): boolean {
-  return /(?:Chrome|Chromium|Edg)\//.test(navigator.userAgent);
+function usesTransformThemeDriver(): boolean {
+  const match = navigator.userAgent.match(/(?:Chrome|Edg)\/(\d+)/);
+  return match ? Number(match[1]) >= 151 : false;
+}
+
+function themeRevealProgress(offset: number): number {
+  let low = 0;
+  let high = 1;
+
+  for (let i = 0; i < 12; i += 1) {
+    const t = (low + high) / 2;
+    const inverse = 1 - t;
+    const x =
+      3 * inverse * inverse * t * 0.22 +
+      3 * inverse * t * t * 0.36 +
+      t * t * t;
+
+    if (x < offset) low = t;
+    else high = t;
+  }
+
+  const t = (low + high) / 2;
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function createTransformRevealKeyframes(radius: number): {
+  reveal: Keyframe[];
+  counterScale: Keyframe[];
+} {
+  const minimumScale = Math.max(0.006, Math.min(0.02, 16 / radius));
+  const reveal: Keyframe[] = [];
+  const counterScale: Keyframe[] = [];
+
+  for (let i = 0; i <= THEME_REVEAL_SAMPLES; i += 1) {
+    const offset = i / THEME_REVEAL_SAMPLES;
+    const eased = themeRevealProgress(offset);
+    const scale = minimumScale + (1 - minimumScale) * eased;
+
+    reveal.push({ offset, transform: `scale(${scale})` });
+    counterScale.push({ offset, transform: `scale(${1 / scale})` });
+  }
+
+  return { reveal, counterScale };
 }
 
 function useIsMounted(): boolean {
@@ -76,40 +117,55 @@ function NavThemeToggle(): ReactNode {
     root.style.setProperty("--theme-r", `${radius}px`);
     root.dataset.themeAnim = "1";
 
-    const useChromiumDriver =
-      usesChromiumThemeDriver() && typeof root.animate === "function";
-    if (useChromiumDriver) root.dataset.themeDriver = "waapi";
+    const useTransformDriver =
+      usesTransformThemeDriver() && typeof root.animate === "function";
+    if (useTransformDriver) {
+      root.dataset.themeDriver = "transform";
+      root.style.setProperty("view-transition-name", "theme-old");
+    }
 
     const cleanup = (): void => {
       delete root.dataset.themeAnim;
       delete root.dataset.themeDriver;
+      root.style.removeProperty("view-transition-name");
     };
 
     const transition = document.startViewTransition(() => {
+      if (useTransformDriver) {
+        root.style.setProperty("view-transition-name", "theme-new");
+      }
       setTheme(next);
     });
 
-    if (!useChromiumDriver) {
+    if (!useTransformDriver) {
       transition.finished.finally(cleanup);
       return;
     }
 
     transition.ready
-      .then(() =>
-        root.animate(
-          {
-            clipPath: [
-              `circle(0px at ${cx}px ${cy}px)`,
-              `circle(${radius}px at ${cx}px ${cy}px)`,
-            ],
-          },
-          {
-            duration: THEME_REVEAL_DURATION,
-            easing: THEME_REVEAL_EASING,
-            pseudoElement: "::view-transition-new(root)",
-          }
-        ).finished
-      )
+      .then(async () => {
+        const { reveal, counterScale } =
+          createTransformRevealKeyframes(radius);
+        const timing: KeyframeAnimationOptions = {
+          duration: THEME_REVEAL_DURATION,
+          easing: "linear",
+          fill: "both",
+        };
+
+        const revealAnimation = root.animate(reveal, {
+          ...timing,
+          pseudoElement: "::view-transition-group(theme-new)",
+        });
+        const counterScaleAnimation = root.animate(counterScale, {
+          ...timing,
+          pseudoElement: "::view-transition-image-pair(theme-new)",
+        });
+
+        await Promise.all([
+          revealAnimation.finished,
+          counterScaleAnimation.finished,
+        ]);
+      })
       .catch(() => undefined)
       .finally(cleanup);
   };
