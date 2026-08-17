@@ -1,6 +1,6 @@
 # FISHDI Portfolio - Codex Handoff
 
-Last updated: 2026-07-24
+Last updated: 2026-08-17
 
 Read this before modifying the project. Keep it current when architecture,
 content, deployment, routes, assets, dependencies, or known issues change.
@@ -286,7 +286,10 @@ must call `useReducedMotion()`:
   starts at the theme button and follows the original 700ms timing, while
   Safari and other browsers retain the template CSS animation. Transition-only
   attributes now remain in place until `ViewTransition.finished`, preventing a
-  one-frame default-style flash after the transform animations complete.
+  one-frame default-style flash after the transform animations complete. The
+  paired transform animations now share one timeline start, use an exact
+  `scale(1)` endpoint, and align their geometry to physical pixels so the live
+  page does not shift when the completed snapshot is removed.
 - 2026-08-14: Added a Chromium-only WAAPI driver for the light/dark circular
   reveal while retaining the existing Safari CSS path. Chrome and Edge now
   animate the same button-centered circle directly on the view-transition

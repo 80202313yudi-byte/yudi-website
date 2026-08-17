@@ -65,7 +65,10 @@ function createTransformRevealKeyframes(radius: number): {
   for (let i = 0; i <= THEME_REVEAL_SAMPLES; i += 1) {
     const offset = i / THEME_REVEAL_SAMPLES;
     const eased = themeRevealProgress(offset);
-    const scale = minimumScale + (1 - minimumScale) * eased;
+    const scale =
+      i === THEME_REVEAL_SAMPLES
+        ? 1
+        : minimumScale + (1 - minimumScale) * eased;
 
     reveal.push({ offset, transform: `scale(${scale})` });
     counterScale.push({ offset, transform: `scale(${1 / scale})` });
@@ -104,12 +107,18 @@ function NavThemeToggle(): ReactNode {
     }
 
     const rect = event.currentTarget.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const radius = Math.hypot(
-      Math.max(cx, window.innerWidth - cx),
-      Math.max(cy, window.innerHeight - cy)
-    );
+    const pixelRatio = window.devicePixelRatio || 1;
+    const alignToDevicePixel = (value: number): number =>
+      Math.round(value * pixelRatio) / pixelRatio;
+    const cx = alignToDevicePixel(rect.left + rect.width / 2);
+    const cy = alignToDevicePixel(rect.top + rect.height / 2);
+    const radius =
+      Math.ceil(
+        Math.hypot(
+          Math.max(cx, window.innerWidth - cx),
+          Math.max(cy, window.innerHeight - cy)
+        ) * pixelRatio
+      ) / pixelRatio;
 
     const root = document.documentElement;
     root.style.setProperty("--theme-cx", `${cx}px`);
@@ -160,6 +169,12 @@ function NavThemeToggle(): ReactNode {
           ...timing,
           pseudoElement: "::view-transition-image-pair(theme-new)",
         });
+
+        const sharedStartTime = document.timeline.currentTime;
+        if (sharedStartTime !== null) {
+          revealAnimation.startTime = sharedStartTime;
+          counterScaleAnimation.startTime = sharedStartTime;
+        }
 
         await Promise.all([
           revealAnimation.finished,
