@@ -277,11 +277,11 @@ must call `useReducedMotion()`:
 
 - Review the generated 1254x1254 replacement candidates
   `public/fishdi-portrait-default-v1.png` and
-  `public/fishdi-portrait-wave-3d-v5.png`; the latest hover candidate keeps the
-  premium 3D blind-box rendering while using young-adult facial proportions,
-  smaller eyes, a firmer jawline, warm home-studio lighting, a dark pullover
-  hoodie, and a gentle closed-mouth smile. Earlier waving revisions remain
-  available for comparison. The default portrait is still the earlier 2D
+  `public/fishdi-portrait-wave-3d-v6.png`; the latest hover candidate balances
+  the youthful Q-style softness of v4 with the adult facial structure of v5,
+  retaining premium 3D blind-box rendering, warm home-studio lighting, a dark
+  pullover hoodie, and a gentle closed-mouth smile. Earlier waving revisions
+  remain available for comparison. The default portrait is still the earlier 2D
   candidate, so generate or approve a matching 3D default before wiring the
   pair into the Hero in place of `public/josh.webp` and
   `public/josh_wave.webp`.
@@ -293,6 +293,10 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-08-17: Added `public/fishdi-portrait-wave-3d-v6.png`, a 1254x1254
+  midpoint refinement between the childlike v4 and overly mature v5. It keeps
+  approachable Q-style softness while reading as a young adult and remains an
+  inactive candidate.
 - 2026-08-17: Added `public/fishdi-portrait-wave-3d-v5.png`, a 1254x1254
   young-adult refinement of the 3D waving portrait. It reduces the oversized
   eyes and childlike facial proportions while retaining the blind-box material,
