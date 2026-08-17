@@ -253,17 +253,6 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
       io.observe(el);
       cleanup.push(() => io.disconnect());
 
-      const syncBg = (): void => {
-        p.uniforms.uBgColor.value = readBgColor(document.documentElement);
-      };
-      const themeObserver = new MutationObserver(syncBg);
-      themeObserver.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["class", "data-theme"],
-      });
-      cleanup.push(() => themeObserver.disconnect());
-      syncBg();
-
       const sync = (): void => {
         const c = pr.current;
         p.uniforms.uV.value = [...(c.flowSpeed ?? D.flowSpeed)];
@@ -280,17 +269,48 @@ export function ShaderFlow(props: ShaderFlowProps): ReactNode {
         ];
       };
 
-      let lastTransitionRender = 0;
+      const syncBg = (): void => {
+        p.uniforms.uBgColor.value = readBgColor(document.documentElement);
+
+        if (
+          document.documentElement.dataset.themeDriver === "transform" &&
+          visible &&
+          onScreen &&
+          renderer
+        ) {
+          sync();
+          renderer.render({ scene });
+        }
+      };
+      const themeObserver = new MutationObserver(syncBg);
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class", "data-theme"],
+      });
+      cleanup.push(() => themeObserver.disconnect());
+      syncBg();
+
+      let transitionPauseStartedAt: number | null = null;
+      let transitionPausedDuration = 0;
 
       const tick = (now: number): void => {
         const chromiumThemeTransition =
           document.documentElement.dataset.themeDriver === "transform";
-        const transitionFrameReady =
-          !chromiumThemeTransition || now - lastTransitionRender >= 1000 / 30;
 
-        if (visible && onScreen && renderer && transitionFrameReady) {
-          lastTransitionRender = now;
-          p.uniforms.uT.value = (now - t0) / 1000;
+        if (chromiumThemeTransition) {
+          transitionPauseStartedAt ??= now;
+          raf = requestAnimationFrame(tick);
+          return;
+        }
+
+        if (transitionPauseStartedAt !== null) {
+          transitionPausedDuration += now - transitionPauseStartedAt;
+          transitionPauseStartedAt = null;
+        }
+
+        if (visible && onScreen && renderer) {
+          p.uniforms.uT.value =
+            (now - t0 - transitionPausedDuration) / 1000;
           sync();
           renderer.render({ scene });
         }

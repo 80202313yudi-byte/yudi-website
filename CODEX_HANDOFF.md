@@ -28,10 +28,13 @@ redesign.
   the template CSS animation. Chrome and Edge 151+ use a transform-only reveal:
   a circular `::view-transition-group(theme-new)` scales outward while its
   image pair counter-scales, keeping the new page visually stationary without
-  animating `clip-path`. During that 700ms reveal, `ShaderFlow` remains live at
-  a stable 30fps while the visually static `PortraitMorph` render loop yields
-  GPU time to the transition. Outside that brief window, both WebGL effects run
-  normally. Keep both browser paths visually synchronized.
+  animating `clip-path`. The paired transforms use scale-ratio-adaptive
+  keyframes so their interpolated product remains visually neutral instead of
+  making the background bulge. During that 700ms reveal, `ShaderFlow` freezes
+  its time phase and resumes from the same frame afterward; the visually static
+  `PortraitMorph` render loop also yields GPU time to the transition. Outside
+  that brief window, both WebGL effects run normally. Keep both browser paths
+  visually synchronized.
 - Large serif headings, restrained cards, subtle borders, soft motion
 - A restrained FISHDI brand signal color is defined globally in
   `app/globals.css` as `--brand`, `--brand-strong`, `--brand-soft`, and
@@ -289,7 +292,10 @@ must call `useReducedMotion()`:
   one-frame default-style flash after the transform animations complete. The
   paired transform animations now share one timeline start, use an exact
   `scale(1)` endpoint, and align their geometry to physical pixels so the live
-  page does not shift when the completed snapshot is removed.
+  page does not shift when the completed snapshot is removed. Adaptive
+  scale-ratio keyframes remove the counter-scale interpolation bulge, and the
+  background shader now holds one visual phase through the reveal before
+  resuming.
 - 2026-08-14: Added a Chromium-only WAAPI driver for the light/dark circular
   reveal while retaining the existing Safari CSS path. Chrome and Edge now
   animate the same button-centered circle directly on the view-transition

@@ -27,7 +27,7 @@ const NAV_ITEMS: readonly NavItem[] = [
 ];
 
 const THEME_REVEAL_DURATION = 700;
-const THEME_REVEAL_SAMPLES = 48;
+const THEME_REVEAL_MAX_SCALE_RATIO = 1.02;
 
 function usesTransformThemeDriver(): boolean {
   const match = navigator.userAgent.match(/(?:Chrome|Edg)\/(\d+)/);
@@ -38,7 +38,7 @@ function themeRevealProgress(offset: number): number {
   let low = 0;
   let high = 1;
 
-  for (let i = 0; i < 12; i += 1) {
+  for (let i = 0; i < 20; i += 1) {
     const t = (low + high) / 2;
     const inverse = 1 - t;
     const x =
@@ -61,15 +61,34 @@ function createTransformRevealKeyframes(radius: number): {
   const minimumScale = Math.max(0.006, Math.min(0.02, 16 / radius));
   const reveal: Keyframe[] = [];
   const counterScale: Keyframe[] = [];
+  const scales = [minimumScale];
+  let scale = minimumScale;
 
-  for (let i = 0; i <= THEME_REVEAL_SAMPLES; i += 1) {
-    const offset = i / THEME_REVEAL_SAMPLES;
-    const eased = themeRevealProgress(offset);
-    const scale =
-      i === THEME_REVEAL_SAMPLES
-        ? 1
-        : minimumScale + (1 - minimumScale) * eased;
+  while (scale < 1) {
+    scale = Math.min(1, scale * THEME_REVEAL_MAX_SCALE_RATIO);
+    scales.push(scale);
+  }
 
+  const offsetForScale = (scale: number): number => {
+    if (scale === minimumScale) return 0;
+    if (scale === 1) return 1;
+
+    const targetProgress =
+      (scale - minimumScale) / (1 - minimumScale);
+    let low = 0;
+    let high = 1;
+
+    for (let i = 0; i < 20; i += 1) {
+      const offset = (low + high) / 2;
+      if (themeRevealProgress(offset) < targetProgress) low = offset;
+      else high = offset;
+    }
+
+    return (low + high) / 2;
+  };
+
+  for (const scale of scales) {
+    const offset = offsetForScale(scale);
     reveal.push({ offset, transform: `scale(${scale})` });
     counterScale.push({ offset, transform: `scale(${1 / scale})` });
   }
