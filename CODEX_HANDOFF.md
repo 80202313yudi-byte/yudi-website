@@ -284,7 +284,9 @@ must call `useReducedMotion()`:
 - 2026-08-17: Replaced the Chrome/Edge 151+ clip-path theme reveal with a
   compositor-friendly transform/counter-transform circle. The reveal still
   starts at the theme button and follows the original 700ms timing, while
-  Safari and other browsers retain the template CSS animation.
+  Safari and other browsers retain the template CSS animation. Transition-only
+  attributes now remain in place until `ViewTransition.finished`, preventing a
+  one-frame default-style flash after the transform animations complete.
 - 2026-08-14: Added a Chromium-only WAAPI driver for the light/dark circular
   reveal while retaining the existing Safari CSS path. Chrome and Edge now
   animate the same button-centered circle directly on the view-transition

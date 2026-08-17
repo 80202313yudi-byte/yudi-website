@@ -166,8 +166,9 @@ function NavThemeToggle(): ReactNode {
           counterScaleAnimation.finished,
         ]);
       })
-      .catch(() => undefined)
-      .finally(cleanup);
+      .catch(() => undefined);
+
+    transition.finished.finally(cleanup);
   };
 
   return (
