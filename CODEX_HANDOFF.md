@@ -277,8 +277,11 @@ must call `useReducedMotion()`:
 
 - Review the generated 1254x1254 replacement candidates
   `public/fishdi-portrait-default-v1.png` and
-  `public/fishdi-portrait-wave-v1.png`; after approval, wire them into the Hero
-  in place of `public/josh.webp` and `public/josh_wave.webp`.
+  `public/fishdi-portrait-wave-v2.png`; the preferred hover image now uses a
+  gentle closed-mouth smile with no visible teeth. The earlier
+  `public/fishdi-portrait-wave-v1.png` is retained only as the rejected toothy
+  smile variant. After approval, wire the preferred pair into the Hero in place
+  of `public/josh.webp` and `public/josh_wave.webp`.
 - Replace remote Dribbble placeholder project images with owned project assets
 - Replace placeholder social links in `components/contact/contact-card.tsx`
 - Replace public Gmail if the user does not want it visible
@@ -287,6 +290,10 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-08-17: Added `public/fishdi-portrait-wave-v2.png`, a 1254x1254 revision
+  of the generated waving portrait with a natural closed-mouth smile and no
+  visible teeth. The image remains an inactive candidate; the previous v1 is
+  retained for comparison and the live Hero was not changed.
 - 2026-08-17: Generated a matched pair of identity-preserving homepage portrait
   candidates from the user's supplied photo. The default and waving images are
   both 1254x1254 and are stored as `public/fishdi-portrait-default-v1.png` and
