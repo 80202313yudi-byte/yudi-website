@@ -6,8 +6,8 @@ import { FadeIn, ScaleUnblur } from "@/components/ui/motion-primitives";
 import { TypewriterRotatingText } from "@/components/ui/typewriter-rotating-text";
 import { PortraitMorph } from "./portrait-morph";
 
-const PORTRAIT_SRC = "/josh.webp";
-const PORTRAIT_HOVER_SRC = "/josh_wave.webp";
+const PORTRAIT_SRC = "/fishdi-portrait-default.webp";
+const PORTRAIT_HOVER_SRC = "/fishdi-portrait-wave.webp";
 const POSITIONING_KEYWORDS = [
   "内容封面包装",
   "AI 视觉系统",

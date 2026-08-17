@@ -250,7 +250,8 @@ must call `useReducedMotion()`:
 
 - `ShaderFlow` renders a static gradient and does not create OGL/WebGL or RAF
   when reduced motion is enabled or WebGL is unavailable.
-- `PortraitMorph` falls back to the static `/josh.webp` portrait if WebGL or
+- `PortraitMorph` falls back to the static `/fishdi-portrait-default.webp`
+  portrait if WebGL or
   OGL initialization fails, so the page must not crash on no-WebGL devices.
 - `Stack` keeps the Matter.js physics tag layout for normal-motion users and
   falls back to static wrapped tool tags for reduced-motion or narrow screens.
@@ -275,16 +276,13 @@ must call `useReducedMotion()`:
 
 ## Known Follow-Ups
 
-- The user-selected matched 1254x1254 3D portrait pair is stored as
-  `public/fishdi-portrait-default-3d-v8.png` and
-  `public/fishdi-portrait-wave-3d-v8.png`. This pair restores the previous Hero
-  camera angle: the subject sits at a slight three-quarter angle, is placed left
-  of center, and the laptop occupies the lower-right foreground. The default
-  uses a closed-mouth smile; the hover version keeps the same composition while
-  adding a raised open hand and a natural teeth-showing smile. Earlier revisions
-  remain available for comparison. The selected pair is not wired into the Hero
-  yet; replace `public/josh.webp` and `public/josh_wave.webp` only when the user
-  asks to update the site.
+- The active matched 1254x1254 homepage portrait pair is stored as
+  `public/fishdi-portrait-default.webp` and
+  `public/fishdi-portrait-wave.webp`. The default uses a closed-mouth smile at
+  the laptop; the hover version keeps the same orange home-studio composition
+  while adding a raised open hand and a natural teeth-showing smile. Both are
+  optimized WebP files and are wired through `components/hero/hero.tsx`.
+  Earlier generated revisions remain available for comparison.
 - Replace remote Dribbble placeholder project images with owned project assets
 - Replace placeholder social links in `components/contact/contact-card.tsx`
 - Replace public Gmail if the user does not want it visible
@@ -293,6 +291,11 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-08-17: Replaced the homepage Hero portraits with the user's final orange
+  3D cartoon pair. Converted both supplied 1254x1254 PNGs to quality-90 WebP as
+  `public/fishdi-portrait-default.webp` and
+  `public/fishdi-portrait-wave.webp`, then updated the Hero sources while
+  preserving the existing WebGL hover/touch morph interaction. Not published.
 - 2026-08-17: Added `public/fishdi-portrait-default-3d-v8.png` and
   `public/fishdi-portrait-wave-3d-v8.png`, restoring the earlier Hero portrait's
   three-quarter seated composition, left-of-center placement, and lower-right
