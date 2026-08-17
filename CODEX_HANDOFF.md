@@ -275,7 +275,10 @@ must call `useReducedMotion()`:
 
 ## Known Follow-Ups
 
-- Replace `public/josh.webp` and `public/josh_wave.webp`
+- Review the generated 1254x1254 replacement candidates
+  `public/fishdi-portrait-default-v1.png` and
+  `public/fishdi-portrait-wave-v1.png`; after approval, wire them into the Hero
+  in place of `public/josh.webp` and `public/josh_wave.webp`.
 - Replace remote Dribbble placeholder project images with owned project assets
 - Replace placeholder social links in `components/contact/contact-card.tsx`
 - Replace public Gmail if the user does not want it visible
@@ -284,6 +287,10 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-08-17: Generated a matched pair of identity-preserving homepage portrait
+  candidates from the user's supplied photo. The default and waving images are
+  both 1254x1254 and are stored as `public/fishdi-portrait-default-v1.png` and
+  `public/fishdi-portrait-wave-v1.png`; they are not active on the site yet.
 - 2026-08-17: Replaced the Chrome/Edge 151+ clip-path theme reveal with a
   compositor-friendly transform/counter-transform circle. The reveal still
   starts at the theme button and follows the original 700ms timing, while
