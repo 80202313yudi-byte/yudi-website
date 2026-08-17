@@ -289,8 +289,18 @@ must call `useReducedMotion()`:
 - Existing lint warnings come from template `<img>` usage in About/hero helper
   components. They are warnings, not build blockers.
 
+The active browser/shortcut icon uses the user's blue line-art avatar. Next.js
+file-convention assets live at `app/icon.png` and `app/apple-icon.png`; PWA
+manifest variants live at `public/fishdi-avatar-192.png` and
+`public/fishdi-avatar-512.png`. Site titles, manifest names, and existing theme
+and background colors remain unchanged.
+
 ## Change Log
 
+- 2026-08-17: Replaced the legacy triangle/menu favicon assets with the user's
+  blue line-art avatar. Added tightly cropped 512px browser, 180px Apple, and
+  192px/512px PWA PNG variants; updated metadata and the web manifest without
+  changing site text, shortcut names, or theme/background colors. Not published.
 - 2026-08-17: Replaced the homepage Hero portraits with the user's final orange
   3D cartoon pair. Converted both supplied 1254x1254 PNGs to quality-90 WebP as
   `public/fishdi-portrait-default.webp` and
