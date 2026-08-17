@@ -275,16 +275,14 @@ must call `useReducedMotion()`:
 
 ## Known Follow-Ups
 
-- Review the generated 1254x1254 replacement candidates
-  `public/fishdi-portrait-default-v1.png` and
-  `public/fishdi-portrait-wave-3d-v6.png`; the latest hover candidate balances
-  the youthful Q-style softness of v4 with the adult facial structure of v5,
-  retaining premium 3D blind-box rendering, warm home-studio lighting, a dark
-  pullover hoodie, and a gentle closed-mouth smile. Earlier waving revisions
-  remain available for comparison. The default portrait is still the earlier 2D
-  candidate, so generate or approve a matching 3D default before wiring the
-  pair into the Hero in place of `public/josh.webp` and
-  `public/josh_wave.webp`.
+- The user-selected matched 1254x1254 3D portrait pair is stored as
+  `public/fishdi-portrait-default-3d-v7.png` and
+  `public/fishdi-portrait-wave-3d-v7.png`. The default preserves the supplied
+  seated, closed-mouth portrait; the hover version keeps the same composition
+  while adding a raised open hand and a natural teeth-showing smile. Earlier
+  revisions remain available for comparison. The selected pair is not wired
+  into the Hero yet; replace `public/josh.webp` and `public/josh_wave.webp` only
+  when the user asks to update the site.
 - Replace remote Dribbble placeholder project images with owned project assets
 - Replace placeholder social links in `components/contact/contact-card.tsx`
 - Replace public Gmail if the user does not want it visible
@@ -293,6 +291,12 @@ must call `useReducedMotion()`:
 
 ## Change Log
 
+- 2026-08-17: Added the user-selected matched 3D portrait pair as
+  `public/fishdi-portrait-default-3d-v7.png` and
+  `public/fishdi-portrait-wave-3d-v7.png`. Both are 1254x1254; the first is the
+  supplied no-wave portrait and the second adds a five-finger wave with a
+  natural teeth-showing smile while preserving the warm studio composition.
+  The pair remains inactive and was not published.
 - 2026-08-17: Added `public/fishdi-portrait-wave-3d-v6.png`, a 1254x1254
   midpoint refinement between the childlike v4 and overly mature v5. It keeps
   approachable Q-style softness while reading as a young adult and remains an
