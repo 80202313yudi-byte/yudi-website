@@ -292,11 +292,17 @@ must call `useReducedMotion()`:
 The active browser/shortcut icon uses the user's blue line-art avatar. Next.js
 file-convention assets live at `app/icon.png` and `app/apple-icon.png`; PWA
 manifest variants live at `public/fishdi-avatar-192.png` and
-`public/fishdi-avatar-512.png`. Site titles, manifest names, and existing theme
-and background colors remain unchanged.
+`public/fishdi-avatar-512.png`. All variants use a light-gray rounded-square
+tile with transparent outer corners, matching the familiar app-icon treatment
+while allowing the browser's existing background color to remain visible. Site
+titles, manifest names, and existing theme/background colors remain unchanged.
 
 ## Change Log
 
+- 2026-08-17: Refined all avatar icon variants into a light-gray rounded-square
+  tile with transparent outer corners, matching the user's browser reference
+  while preserving the avatar artwork, labels, and browser/theme background.
+  Not published.
 - 2026-08-17: Replaced the legacy triangle/menu favicon assets with the user's
   blue line-art avatar. Added tightly cropped 512px browser, 180px Apple, and
   192px/512px PWA PNG variants; updated metadata and the web manifest without
